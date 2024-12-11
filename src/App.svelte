@@ -121,9 +121,9 @@
     scene.add(markerRoot);
 
   var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
-      //size: 0.16,
+      size: 0.2,
       type : 'nft',
-      descriptorsUrl : "../src/data/patterns/whaleSnippet",
+      descriptorsUrl : "../src/data/patterns/whalecircles",
       changeMatrixMode: "modelViewMatrix",
       smooth: true,
       smoothCount: 8,
@@ -167,8 +167,8 @@
 
     //window.addEventListener('arjs-nft-init-data', setMarkerPos)
 
-    container.scale.set(200,20,200);
-    //container.position.set(40,50,-90);
+    container.scale.set(400,20,400);
+    //container.position.set(200,50,-200);
 
   render();
   animate();
