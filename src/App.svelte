@@ -1,119 +1,179 @@
-<main>
-    <div class="arjs-loader">
-        <div>Loading, please wait...</div>
-    </div>
-</main>
-
 <script lang="ts">
-  import {Canvas} from '@threlte/core'
-  import {
-      Camera,
-      Color,
-      Group,
-      Scene,
-      WebGLRenderer,
-      BufferGeometry,
-      TextureLoader,
-      MeshBasicMaterial,
-      Mesh, Clock, AmbientLight
-  } from "three";
-  import { ArToolkitProfile, ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
-  import Main from "./main";
+    import {Canvas} from '@threlte/core'
+    import {
+        Camera,
+        Color,
+        Group,
+        Scene,
+        WebGLRenderer,
+        BufferGeometry,
+        TextureLoader,
+        MeshBasicMaterial,
+        PlaneGeometry,
+        Mesh, Clock, AmbientLight, Object3D, AnimationMixer, AnimationClip, BoxGeometry, Vector3
+    } from "three";
+    import { ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
 
-  var scene: Scene, renderer: WebGLRenderer, clock:Clock, deltaTime:number, totalTime:number;
-  var camera : Camera;
-  var arToolkitSource = new ArToolkitSource();
-  var arToolkitContext = new ArToolkitContext();
-  var markerRoot1;
+
+  //////////////////////////////////////////////////////////////////////////////////
+  //		Init
+  //////////////////////////////////////////////////////////////////////////////////
+
+  var renderer = new WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      logarithmicDepthBuffer: true
+  });
+
+  var deltaTime : number, totalTime : number;
+
+  var clock = new Clock();
+
+  let mixers = [];
+
   var mesh1;
 
-  init();
+  renderer.setPixelRatio(window.devicePixelRatio);
+
+  renderer.setClearColor(new Color('lightgrey'), 0)
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.domElement.style.position = 'absolute'
+  renderer.domElement.style.top = '0px'
+  renderer.domElement.style.left = '0px'
+  document.body.appendChild( renderer.domElement );
+
+  // init scene and camera
+  var scene = new Scene();
+
+  //////////////////////////////////////////////////////////////////////////////////
+  //		Initialize a basic camera
+  //////////////////////////////////////////////////////////////////////////////////
+
+  // Create a camera
+  var camera = new Camera();
+  scene.add(camera);
+
+  var light = new AmbientLight(0xffffff);
+  scene.add(light);
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //          handle arToolkitSource
+  ////////////////////////////////////////////////////////////////////////////////
+
+  var arToolkitSource = new ArToolkitSource({
+      sourceType : 'webcam',
+      sourceWidth: 480,
+      sourceHeight: 640,
+  })
+
+  arToolkitSource.init(function onReady(){
+      // use a resize to fullscreen mobile devices
+      setTimeout(function() {
+          onResize()
+      }, 1000);
+  })
+
+  // handle resize
+  window.addEventListener('resize', function(){
+      onResize()
+  })
+
+  // listener for end loading of NFT marker
+  window.addEventListener('arjs-nft-loaded', function(ev){
+      console.log(ev);
+  })
+
+  function onResize(){
+      arToolkitSource.onResizeElement()
+      arToolkitSource.copyElementSizeTo(renderer.domElement)
+      //if( arToolkitContext.arController !== null ){
+          arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+      //}
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //          initialize arToolkitContext
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // create atToolkitContext
+  var arToolkitContext = new ArToolkitContext({
+      detectionMode: 'color_and_matrix',
+      canvasWidth: 480,
+      canvasHeight: 640,
+  }, {
+      sourceWidth: 480,
+      sourceHeight: 640,
+  })
+
+  // initialize it
+  arToolkitContext.init(function onCompleted(){
+      // copy projection matrix to camera
+      camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+  })
+
+  ////////////////////////////////////////////////////////////////////////////////
+  //          Create a ArMarkerControls
+  ////////////////////////////////////////////////////////////////////////////////
+
+  // init controls for camera
+    var markerRoot = new Group();
+    scene.add(markerRoot);
+
+  // var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+  //     size: 0.16,
+  //     type : 'nft',
+  //     patternUrl : "../src/data/patterns/whale1",
+  //     changeMatrixMode: "modelViewMatrix",
+  //     smooth: true,
+  //     smoothCount: 7,
+  //     smoothTolerance: 0.03,
+  //     smoothThreshold: 3
+  // })
+    var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+        type : 'pattern',
+        patternUrl : "../src/data/patterns/whale1.patt"
+    })
+
+  scene.visible = true
+
+  //////////////////////////////////////////////////////////////////////////////////
+  //		add an object in the scene
+  //////////////////////////////////////////////////////////////////////////////////
+
+    var container = new Group();
+    markerRoot.add(container);
+
+  let geometry1 = new PlaneGeometry(1,1,4,4);
+  let loader = new TextureLoader();
+  let texture = loader.load( '../src/assets/ar-placeholder.png', render );
+  let material1 = new MeshBasicMaterial( { map: texture } );
+
+    mesh1 = new Mesh( geometry1, material1 );
+    mesh1.rotation.x = -Math.PI/2;
+    //container.add( mesh1 );
+
+
+    const geometry = new BoxGeometry( 1, 1, 1 );
+    const material = new MeshBasicMaterial( { map: texture } );
+    const cube = new Mesh( geometry, material );
+    container.add(cube)
+
+
+    function setMarkerPos(nft:Event)
+    {
+        var nftCE:CustomEvent = nft as CustomEvent;
+        var msg = nftCE.detail;
+        markerRoot.position.y = (msg.height / msg.dpi * 2.54 * 10) / 2.0 ; //y axis?
+        markerRoot.position.x = (msg.width / msg.dpi * 2.54 * 10) / 2.0 ;//x axis?
+    }
+
+    //window.addEventListener('arjs-nft-init-data', setMarkerPos)
+
+    container.scale.set(20,20,20);
+
+  render();
   animate();
 
-  function init(){
-
-      scene = new Scene();
-
-      let ambientLight = new AmbientLight( 0xcccccc, 0.5 );
-      scene.add( ambientLight );
-
-      camera = new Camera();
-      scene.add(camera);
-
-      renderer = new WebGLRenderer({antialias: true, alpha: true});
-      renderer.setClearColor(new Color('lightgrey'),0);
-      renderer.setSize( 640, 480 );
-      renderer.domElement.style.position = 'absolute'
-      renderer.domElement.style.top = '0px'
-      renderer.domElement.style.left = '0px'
-      document.body.appendChild( renderer.domElement );
-
-      clock = new Clock();
-      deltaTime = 0;
-      totalTime = 0;
-
-      arToolkitSource = new ArToolkitSource({
-          sourceType : 'webcam',
-      });
-
-      function onResize()
-      {
-          arToolkitSource.onResize()
-          arToolkitSource.copySizeTo(renderer.domElement)
-          if ( arToolkitContext.arController !== null )
-          {
-              arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)
-          }
-      }
-
-      arToolkitSource.init(function onReady(){
-          onResize()
-      });
-
-      window.addEventListener('resize', function(){
-          onResize()
-      });
-
-      arToolkitContext = new ArToolkitContext({
-          cameraParametersUrl: 'camera_para.dat',
-          detectionMode: 'color'
-      });
-
-
-      arToolkitContext.init( function onCompleted(){
-          camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-      });
-
-
-      markerRoot1 = new Group();
-      scene.add(markerRoot1);
-      let markerControls1 = new ArMarkerControls(arToolkitContext, markerRoot1,
-          {
-              size: 0.16, type:'pattern', patternUrl: "whale1.patt",
-          })
-      let geometry1 = new BufferGeometry();
-      let loader = new TextureLoader();
-      let texture = loader.load('assets/ar-placeholder.png', render)
-      let material1 = new MeshBasicMaterial({map:texture});
-
-      mesh1 = new Mesh(geometry1, material1);
-      mesh1.rotation.x = -Math.PI / 2;
-
-      markerRoot1.add(mesh1);
-  }
-
-  function update()
-  {
-      // update artoolkit on every frame
-      if ( arToolkitSource.ready !== false )
-          arToolkitContext.update( arToolkitSource.domElement );
-  }
-
-
-  function render()
-  {
-      renderer.render( scene, camera );
-  }
 
 
   function animate()
@@ -121,15 +181,26 @@
       requestAnimationFrame(animate);
       deltaTime = clock.getDelta();
       totalTime += deltaTime;
-      update();
+
+      if ( arToolkitSource.ready !== false )
+          arToolkitContext.update( arToolkitSource.domElement );
+
+      scene.visible = true;
       render();
   }
 
+  function render(){
+      renderer.render( scene, camera );
+  }
 </script>
 
+<main>
+    <div class="arjs-loader">
+        <div class="arjs-loader-spinner"></div>
+    </div>
+</main>
 
-<Canvas>
-</Canvas>
+
 
 
 
