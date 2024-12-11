@@ -97,7 +97,8 @@
 
   // create atToolkitContext
   var arToolkitContext = new ArToolkitContext({
-      detectionMode: 'color_and_matrix',
+      detectionMode: 'color',
+      labelingMode: 'white_region',
       canvasWidth: 480,
       canvasHeight: 640,
   }, {
@@ -119,20 +120,17 @@
     var markerRoot = new Group();
     scene.add(markerRoot);
 
-  // var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
-  //     size: 0.16,
-  //     type : 'nft',
-  //     patternUrl : "../src/data/patterns/whale1",
-  //     changeMatrixMode: "modelViewMatrix",
-  //     smooth: true,
-  //     smoothCount: 7,
-  //     smoothTolerance: 0.03,
-  //     smoothThreshold: 3
-  // })
-    var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
-        type : 'pattern',
-        patternUrl : "../src/data/patterns/whale1.patt"
-    })
+  var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+      //size: 0.16,
+      type : 'nft',
+      descriptorsUrl : "../src/data/patterns/whaleSnippet",
+      changeMatrixMode: "modelViewMatrix",
+      smooth: true,
+      smoothCount: 8,
+      smoothTolerance: 0.03,
+      smoothThreshold: 3
+  })
+
 
   scene.visible = true
 
@@ -169,7 +167,8 @@
 
     //window.addEventListener('arjs-nft-init-data', setMarkerPos)
 
-    container.scale.set(20,20,20);
+    container.scale.set(200,20,200);
+    //container.position.set(40,50,-90);
 
   render();
   animate();
