@@ -84,10 +84,21 @@
       onResize()
   })
 
-  // listener for end loading of NFT marker
-  window.addEventListener('arjs-nft-loaded', function(ev){
-      console.log(ev);
-  })
+    function getSourceOrientation() {
+        console.log(
+            "actual source dimensions",
+            arToolkitSource.domElement.clientWidth,
+            arToolkitSource.domElement.clientHeight
+        );
+
+        if (arToolkitSource.domElement.clientWidth > arToolkitSource.domElement.clientHeight) {
+            console.log("source orientation", "landscape");
+            return "landscape";
+        } else {
+            console.log("source orientation", "portrait");
+            return "portrait";
+        }
+    }
 
   ////////////////////////////////////////////////////////////////////////////////
   //          initialize arToolkitContext
@@ -107,6 +118,8 @@
   arToolkitContext.init(function onCompleted(){
       // copy projection matrix to camera
       camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+      arToolkitContext.arController.orientation = getSourceOrientation();
+      arToolkitContext.arController.options.orientation = getSourceOrientation();
   })
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -117,20 +130,20 @@
     var markerRoot = new Group();
     scene.add(markerRoot);
 
-  // var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
-  //     type : 'nft',
-  //     descriptorsUrl : "../src/data/patterns/whale1",
-  //     changeMatrixMode: "modelViewMatrix",
-  //     smooth: true,
-  //     smoothCount: 8,
-  //     smoothTolerance: 0.03,
-  //     smoothThreshold: 3
-  // })
+  var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+      type : 'nft',
+      descriptorsUrl : "../src/data/patterns/whale1",
+      changeMatrixMode: "modelViewMatrix",
+      smooth: true,
+      smoothCount: 8,
+      smoothTolerance: 0.03,
+      smoothThreshold: 3
+  })
 
-    let markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
-        type : 'pattern',
-        patternUrl : "../src/data/patterns/whale1.patt"
-    })
+    // let markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+    //     type : 'pattern',
+    //     patternUrl : "../src/data/patterns/whale1.patt"
+    // })
 
 
 
