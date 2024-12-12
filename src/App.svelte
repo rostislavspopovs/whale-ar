@@ -9,7 +9,7 @@
         TextureLoader,
         MeshBasicMaterial,
         PlaneGeometry,
-        Mesh, Clock, AmbientLight, BoxGeometry, PerspectiveCamera
+        Mesh, Clock, AmbientLight, BoxGeometry, PerspectiveCamera, Vector3
     } from "three";
     import { ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
     import {ARScene} from "./ARScene.js"
@@ -19,9 +19,10 @@
   //////////////////////////////////////////////////////////////////////////////////
 
   var renderer = new WebGLRenderer({
-      antialias: false,
+      antialias: true,
       alpha: true,
-      logarithmicDepthBuffer: true
+      logarithmicDepthBuffer: false,
+      reverseDepthBuffer: false,
   });
 
   var deltaTime : number, totalTime : number;
@@ -45,14 +46,16 @@
 
   // init scene and camera
   var scene = new Scene();
-  var sceneElement = document.getElementById("scene");
 
   //////////////////////////////////////////////////////////////////////////////////
   //		Initialize a basic camera
   //////////////////////////////////////////////////////////////////////////////////
 
   // Create a camera
-  var camera = new PerspectiveCamera(40, width / height, 1, 10000);
+  var camera = new PerspectiveCamera(40, width / height, 1000, 10000);
+  camera.near = 10;
+  camera.far = 10000;
+  camera.updateProjectionMatrix();
   scene.add(camera);
 
   var light = new AmbientLight(Color.NAMES.white, 2.2);
@@ -115,11 +118,13 @@
       sourceWidth: width,
       sourceHeight: height,
   })
+    arToolkitContext.near = 100;
+    arToolkitContext.far = 10000;
 
   // initialize it
   arToolkitContext.init(function onCompleted(){
       // copy projection matrix to camera
-      camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+      //camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
       arToolkitContext.arController.orientation = getSourceOrientation();
       arToolkitContext.arController.options.orientation = getSourceOrientation();
   })
@@ -129,34 +134,42 @@
   ////////////////////////////////////////////////////////////////////////////////
 
   // init controls for camera
-    var markerRoot = new Group();
-    scene.add(markerRoot);
+    var camTrackerRoot = new Group();
+    scene.add(camTrackerRoot);
 
-  var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+    var contentRoot = new Group();
+    scene.add(contentRoot);
+
+  var markerControls = new ArMarkerControls(arToolkitContext, camTrackerRoot, {
       type : 'nft',
+      size : 0.16,
       descriptorsUrl : "../src/data/patterns/whale1",
-      changeMatrixMode: "modelViewMatrix",
+      changeMatrixMode: "cameraTransformMatrix",
       smooth: true,
-      smoothCount: 8,
+      smoothCount: 30,
       smoothTolerance: 0.1,
-      smoothThreshold: 3
+      smoothThreshold: 15
   })
 
+
+
     markerControls.addEventListener("markerFound", (e) => {
-        if (markerFound == false) {
-            console.log("marker found");
+        if(markerFound == false){
             markerFound = true;
+            camera.position.lerp(camTrackerRoot.position, 1);
+            camera.quaternion.slerp(camTrackerRoot.quaternion, 1);
+
+            renderer.domElement.style.opacity = "1";
         }
-        //sceneElement.style.opacity = "0.5";
     })
 
-    markerControls.addEventListener("markerLost", (e) => {
-        if(markerFound == true) {
-            console.log("marker lost");
+    window.addEventListener("markerLost", (e) => {
+        if(markerFound == true){
             markerFound = false;
+            renderer.domElement.style.opacity = "0.2";
         }
-        //sceneElement.style.opacity = "0.1";
     })
+
 
 
   scene.visible = false;
@@ -166,20 +179,31 @@
   //////////////////////////////////////////////////////////////////////////////////
 
     var arScene = new ARScene(render);
-    markerRoot.add(arScene.group);
+    contentRoot.add(arScene.group);
 
 
   animate();
 
   function animate()
   {
+
       requestAnimationFrame(animate);
       deltaTime = clock.getDelta();
-      totalTime += deltaTime;
+      totalTime += deltaTime
+
+      if(camera.position.distanceTo(camTrackerRoot.position) < 800) {
+          camera.position.lerp(camTrackerRoot.position, 0.15);
+          camera.quaternion.slerp(camTrackerRoot.quaternion, 0.15);
+      }
+
+
       if ( arToolkitSource.ready !== false )
           arToolkitContext.update( arToolkitSource.domElement );
 
       scene.visible = true;
+
+      //console.log(markerFound);
+
       render();
   }
 
@@ -191,6 +215,9 @@
 <main>
     <div class="arjs-loader">
         <div class="arjs-loader-spinner"></div>
+    </div>
+    <div id="marker-lost-notice">
+        <h1>Marker lost, return to postcard</h1>
     </div>
 </main>
 
