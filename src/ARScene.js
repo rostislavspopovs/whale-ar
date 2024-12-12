@@ -17,7 +17,7 @@ export class ARScene {
         } );
 
         this.container.scale.set(100, 100, 100);
-        this.container.position.set(200, 150, -170);
+        //this.container.position.set(200, 150, -170);
     }
 
     get group(){

@@ -1,3 +1,4 @@
+
 <script lang="ts">
     import {Canvas} from '@threlte/core'
     import {
@@ -33,6 +34,7 @@
 
   var width = 640; var height = 480;
 
+  let markerNotYetFound = true;
   let markerFound = false;
 
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -151,22 +153,27 @@
       smoothThreshold: 15
   })
 
-
+    //var markerLostNotice = document.getElementById("marker-lost-notice");
 
     markerControls.addEventListener("markerFound", (e) => {
         if(markerFound == false){
+            markerNotYetFound = false;
             markerFound = true;
             camera.position.lerp(camTrackerRoot.position, 1);
             camera.quaternion.slerp(camTrackerRoot.quaternion, 1);
 
             renderer.domElement.style.opacity = "1";
+
+            //markerLostNotice.style.visibility = "hidden";
         }
     })
 
     window.addEventListener("markerLost", (e) => {
         if(markerFound == true){
             markerFound = false;
-            renderer.domElement.style.opacity = "0.2";
+            renderer.domElement.style.opacity = "0.4";
+
+            //markerLostNotice.style.visibility = "visible";
         }
     })
 
@@ -191,7 +198,7 @@
       deltaTime = clock.getDelta();
       totalTime += deltaTime
 
-      if(camera.position.distanceTo(camTrackerRoot.position) < 800) {
+      if(camera.position.distanceTo(camTrackerRoot.position) < 1000) {
           camera.position.lerp(camTrackerRoot.position, 0.15);
           camera.quaternion.slerp(camTrackerRoot.quaternion, 0.15);
       }
@@ -202,25 +209,29 @@
 
       scene.visible = true;
 
-      //console.log(markerFound);
-
       render();
   }
 
   function render(){
       renderer.render( scene, camera );
   }
+
 </script>
 
 <main>
     <div class="arjs-loader">
         <div class="arjs-loader-spinner"></div>
     </div>
-    <div id="marker-lost-notice">
-        <h1>Marker lost, return to postcard</h1>
-    </div>
+    {#if !markerFound}
+        <div id="marker-lost-notice">
+            {#if markerNotYetFound}
+                <h5>Please point camera at postcard</h5>
+            {:else}
+                <h5>Marker lost, return to postcard</h5>
+            {/if}
+        </div>
+    {/if}
 </main>
-
 
 
 
