@@ -16,6 +16,6 @@
     "isolatedModules": true,
     "moduleDetection": "force"
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/assets/ChillGuy.svelte"],
+  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/data/patterns/*.patt, src/assets/*.png"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

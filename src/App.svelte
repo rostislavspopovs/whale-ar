@@ -36,7 +36,7 @@
   renderer.setPixelRatio(window.devicePixelRatio);
 
   renderer.setClearColor(new Color('lightgrey'), 0)
-  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize( 640, 480 );
   renderer.domElement.style.position = 'absolute'
   renderer.domElement.style.top = '0px'
   renderer.domElement.style.left = '0px'
@@ -61,10 +61,16 @@
   ////////////////////////////////////////////////////////////////////////////////
 
   var arToolkitSource = new ArToolkitSource({
-      sourceType : 'webcam',
-      sourceWidth: 480,
-      sourceHeight: 640,
+      sourceType : 'webcam'
   })
+
+    function onResize(){
+        arToolkitSource.onResizeElement()
+        arToolkitSource.copyElementSizeTo(renderer.domElement)
+        //if( arToolkitContext.arController !== null ){
+        arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+        //}
+    }
 
   arToolkitSource.init(function onReady(){
       // use a resize to fullscreen mobile devices
@@ -83,22 +89,13 @@
       console.log(ev);
   })
 
-  function onResize(){
-      arToolkitSource.onResizeElement()
-      arToolkitSource.copyElementSizeTo(renderer.domElement)
-      //if( arToolkitContext.arController !== null ){
-          arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-      //}
-  }
-
   ////////////////////////////////////////////////////////////////////////////////
   //          initialize arToolkitContext
   ////////////////////////////////////////////////////////////////////////////////
 
   // create atToolkitContext
   var arToolkitContext = new ArToolkitContext({
-      detectionMode: 'color',
-      labelingMode: 'white_region',
+      detectionMode: 'mono',
       canvasWidth: 480,
       canvasHeight: 640,
   }, {
@@ -120,19 +117,24 @@
     var markerRoot = new Group();
     scene.add(markerRoot);
 
-  var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
-      size: 0.2,
-      type : 'nft',
-      descriptorsUrl : "../src/data/patterns/whalecircles",
-      changeMatrixMode: "modelViewMatrix",
-      smooth: true,
-      smoothCount: 8,
-      smoothTolerance: 0.03,
-      smoothThreshold: 3
-  })
+  // var markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+  //     type : 'nft',
+  //     descriptorsUrl : "../src/data/patterns/whale1",
+  //     changeMatrixMode: "modelViewMatrix",
+  //     smooth: true,
+  //     smoothCount: 8,
+  //     smoothTolerance: 0.03,
+  //     smoothThreshold: 3
+  // })
+
+    let markerControls = new ArMarkerControls(arToolkitContext, markerRoot, {
+        type : 'pattern',
+        patternUrl : "../src/data/patterns/whale1.patt"
+    })
 
 
-  scene.visible = true
+
+  scene.visible = false;
 
   //////////////////////////////////////////////////////////////////////////////////
   //		add an object in the scene
@@ -167,20 +169,19 @@
 
     //window.addEventListener('arjs-nft-init-data', setMarkerPos)
 
-    container.scale.set(400,20,400);
+    container.scale.set(100,100,100);
+    //container.scale.set(400,20,400);
     //container.position.set(200,50,-200);
 
-  render();
   animate();
 
-
+  console.log(arToolkitSource.domElement);
 
   function animate()
   {
       requestAnimationFrame(animate);
       deltaTime = clock.getDelta();
       totalTime += deltaTime;
-
       if ( arToolkitSource.ready !== false )
           arToolkitContext.update( arToolkitSource.domElement );
 

@@ -23,7 +23,6 @@
     "@ar-js-org/ar.js": "^3.4.5",
     "@threlte/core": "^8.0.0-next.31",
     "@threlte/extras": "^9.0.0-next.42",
-    "@types/three": "^0.170.0",
     "jsartoolkit5": "^0.0.4",
     "three": "^0.171.0",
     "vite-plugin-mkcert": "^1.17.6"
