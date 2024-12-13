@@ -14,6 +14,7 @@
     } from "three";
     import { ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
     import {ARScene} from "./ARScene.js"
+    import WhaleDescription from "./WhaleDescription.svelte";
 
   //////////////////////////////////////////////////////////////////////////////////
   //		Init
@@ -29,7 +30,6 @@
 
   let markerNotYetFound = true;
   let markerFound = false;
-
 
   renderer.setClearColor(new Color('lightgrey'), 0)
   renderer.setSize( width, height );
@@ -230,6 +230,7 @@
             {/if}
         </div>
     {/if}
+    <WhaleDescription/>
 </main>
 
 

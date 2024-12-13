@@ -22,6 +22,7 @@ let camera;
 
 let interactionManager;
 
+
 export class ARScene {
 
     constructor(_renderer, _camera) {
@@ -87,7 +88,7 @@ export class ARScene {
 
         this.arScene.add(whales);
 
-        this.arScene.scale.set(100, 100, 100);
+        this.arScene.scale.set(75, 75, 75);
         this.arScene.position.set(200, 150, -170);
 
     }
@@ -123,13 +124,19 @@ function setupWhaleInteraction(whales){
 }
 
 function setSelectedWhale(whale){
-    if(selectedWhale != null){
+    if(selectedWhale != null ){
         selectedWhale.scale.set(1,1,1);
+        document.dispatchEvent(new CustomEvent('whaleUnselected'));
+        if (selectedWhale.name === whale.name){
+            console.log("same whale unselected")
+            selectedWhale = null;
+            return;
+        }
     }
 
     selectedWhale = whale;
     selectedWhale.scale.set(2,2,2);
-    console.log("Selected whale " + selectedWhale.name);
+    document.dispatchEvent(new CustomEvent('whaleSelected', {detail: { 'id': selectedWhale.name}}));
 }
 
 function update(){

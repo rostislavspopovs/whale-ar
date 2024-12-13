@@ -61,3 +61,11 @@
   min-height: 100vh;
 }
 
+#whale-description{
+  color: white;
+  background-color: #000e2a;
+  text-align: center;
+  position: absolute;
+  bottom:0px;
+}
+
