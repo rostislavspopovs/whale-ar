@@ -1,56 +1,86 @@
-import {BoxGeometry, Group, LoadingManager, Mesh, MeshBasicMaterial, Object3D, TextureLoader} from "three";
+import {BoxGeometry, Clock, Color, Group, LoadingManager, Mesh, MeshBasicMaterial, Object3D, TextureLoader} from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { InteractionManager } from 'three.interactive';
+
+let deltaTime = 0
+let totalTime = 0;
+let clock = new Clock();
+
+let whale1prefab = new Object3D();
+let whale2prefab = new Object3D();
+let whale3prefab = new Object3D();
+
+let earthObject = new Object3D();
+
+let whales = new Group();
+let whaleCount;
+let whaleCircleRadius = 50;
+
+let selectedWhale;
+
+let camera;
+
+let interactionManager;
 
 export class ARScene {
 
-    constructor() {
+    constructor(_renderer, _camera) {
 
+        camera = _camera;
         this.loadingManager = new LoadingManager();
 
+        interactionManager = new InteractionManager(_renderer, _camera, _renderer.domElement);
+
         this.arScene = new Group();
-
-        let whale1mesh = new Object3D();
-        let whale2mesh = new Object3D();
-        let whale3mesh = new Object3D();
-
-        let whales = new Group();
-        let whaleCount;
-        let whaleCircleRadius = 50;
 
         this.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
             console.log(`Item loaded: ${url}`)
         }
 
+        function instatiateWhale(prefab, name){
+            let whale = prefab.clone();
+            whale.name = name;
+            whales.add(whale);
+        }
+
         this.loadingManager.onLoad = function ( ) {
             console.log(`All Items Loaded`);
-            whales.add(whale1mesh.clone());
-            whales.add(whale2mesh.clone());
-            whales.add(whale3mesh.clone());
-            whales.add(whale1mesh.clone());
-            whales.add(whale2mesh.clone());
-            whales.add(whale3mesh.clone());
+            whales.name = "Whales";
+            instatiateWhale(whale1prefab, "whale1");
+            instatiateWhale(whale2prefab, "whale2");
+            instatiateWhale(whale3prefab, "whale3");
+            instatiateWhale(whale1prefab, "whale4");
+            instatiateWhale(whale2prefab, "whale5");
+            instatiateWhale(whale3prefab, "whale6");
 
             whaleCount = whales.children.length;
             whalesDistributeOnCircle(whales, whaleCircleRadius);
+            setupWhaleInteraction(whales);
+
+            update();
         }
 
         let gltfLoader = new GLTFLoader(this.loadingManager);
         gltfLoader.load("../src/assets/earth-lowpoly.glb", (earth) => {
-            this.arScene.add(earth.scene);
+            earthObject = earth.scene;
+            this.arScene.add(earthObject);
         }, undefined, function ( error ) {
             console.error( error );
         } );
 
         gltfLoader.load("../src/assets/whale1.glb", (whale1) => {
-            whale1mesh = whale1.scene;
+            whale1prefab = whale1.scene;
+            whale1prefab.name = "whale1";
         }, undefined, function ( error ) {console.error( error );} );
 
         gltfLoader.load("../src/assets/whale2.glb", (whale2) => {
-            whale2mesh = whale2.scene;
+            whale2prefab = whale2.scene;
+            whale2prefab.name = "whale2";
         }, undefined, function ( error ) {console.error( error );} );
 
         gltfLoader.load("../src/assets/whale3.glb", (whale3) => {
-            whale3mesh = whale3.scene;
+            whale3prefab = whale3.scene;
+            whale3prefab.name = "whale3";
         }, undefined, function ( error ) {console.error( error );} );
 
         whales.scale.set(0.02,0.02,0.02);
@@ -59,6 +89,7 @@ export class ARScene {
 
         this.arScene.scale.set(100, 100, 100);
         this.arScene.position.set(200, 150, -170);
+
     }
 
     get group(){
@@ -71,14 +102,51 @@ function whalesDistributeOnCircle(whales, radius){
     let n = whales.children.length;
     console.log("whale count: " + n.toString());
     for (let i=0; i<n; ++i) {
-
         let angle = i * ( 2 * Math.PI / n );
 
         let x = ( radius ) * Math.cos( angle );
         let z = ( radius ) * Math.sin( angle );
 
         whales.children[i].position.set(x,0,z);
-        whales.children[i].rotation.set(0,-2*Math.PI * i/6,0);
-        console.log("whale " + i.toString() + " at " + whales.children[i].position.toString());
+        whales.children[i].rotation.set(0,Math.PI-(2*Math.PI * i/6),Math.PI/3);
     }
+}
+
+function setupWhaleInteraction(whales){
+    let n = whales.children.length;
+    for (let i=0; i<n; ++i) {
+        interactionManager.add(whales.children[i]);
+        whales.children[i].addEventListener('click', (event) => {
+            setSelectedWhale(event.target);
+        });
+    }
+}
+
+function setSelectedWhale(whale){
+    if(selectedWhale != null){
+        selectedWhale.scale.set(1,1,1);
+    }
+
+    selectedWhale = whale;
+    selectedWhale.scale.set(2,2,2);
+    console.log("Selected whale " + selectedWhale.name);
+}
+
+function update(){
+    requestAnimationFrame(update);
+    interactionManager.update();
+
+    deltaTime = clock.getDelta();
+    totalTime += deltaTime;
+
+    earthObject.rotation.set(0,totalTime/7,0)
+
+    //whales.rotation.set(0,totalTime/5,0);
+    whales.lookAt(camera.position);
+    whales.rotateX(Math.PI/2)
+    whales.rotateY(totalTime/6);
+
+    //if(selectedWhale != null){
+      //  selectedWhale
+    //}
 }

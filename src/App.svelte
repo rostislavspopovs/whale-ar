@@ -26,10 +26,6 @@
       reverseDepthBuffer: false,
   });
 
-  var deltaTime : number, totalTime : number;
-
-  var clock = new Clock();
-
   var mesh1;
 
   var width = 640; var height = 480;
@@ -155,7 +151,7 @@
 
     //var markerLostNotice = document.getElementById("marker-lost-notice");
 
-    markerControls.addEventListener("markerFound", (e) => {
+    markerControls.addEventListener("markerFound", () => {
         if(markerFound == false){
             markerNotYetFound = false;
             markerFound = true;
@@ -168,7 +164,7 @@
         }
     })
 
-    window.addEventListener("markerLost", (e) => {
+    window.addEventListener("markerLost", () => {
         if(markerFound == true){
             markerFound = false;
             renderer.domElement.style.opacity = "0.4";
@@ -185,18 +181,16 @@
   //		add an object in the scene
   //////////////////////////////////////////////////////////////////////////////////
 
-    var arScene = new ARScene();
+    var arScene = new ARScene(renderer, camera);
     contentRoot.add(arScene.group);
 
 
-  animate();
+  update();
 
-  function animate()
+  function update()
   {
 
-      requestAnimationFrame(animate);
-      deltaTime = clock.getDelta();
-      totalTime += deltaTime
+      requestAnimationFrame(update);
 
       if(camera.position.distanceTo(camTrackerRoot.position) < 1000) {
           camera.position.lerp(camTrackerRoot.position, 0.15);
