@@ -20,7 +20,7 @@
   //////////////////////////////////////////////////////////////////////////////////
 
   var renderer = new WebGLRenderer({
-      antialias: true,
+      antialias: false,
       alpha: true,
       logarithmicDepthBuffer: false,
       reverseDepthBuffer: false,
@@ -185,7 +185,7 @@
   //		add an object in the scene
   //////////////////////////////////////////////////////////////////////////////////
 
-    var arScene = new ARScene(render);
+    var arScene = new ARScene();
     contentRoot.add(arScene.group);
 
 
