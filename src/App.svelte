@@ -103,9 +103,9 @@
   arToolkitContext.init(function onCompleted(){
       // copy projection matrix to camera
       camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-      //camera.near = 10;
-      //camera.far = 10000;
-      //camera.updateProjectionMatrix();
+      camera.near = 10;
+      camera.far = 10000;
+      camera.updateProjectionMatrix();
       arToolkitContext.arController.orientation = getSourceOrientation();
       arToolkitContext.arController.options.orientation = getSourceOrientation();
   })
