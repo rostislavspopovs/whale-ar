@@ -10,7 +10,7 @@
         TextureLoader,
         MeshBasicMaterial,
         PlaneGeometry,
-        Mesh, Clock, AmbientLight, BoxGeometry, PerspectiveCamera, Vector3
+        Mesh, Clock, AmbientLight, BoxGeometry, PerspectiveCamera, Vector3, Vector4
     } from "three";
     import { ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
     import {ARScene} from "./ARScene.js"
@@ -20,26 +20,23 @@
   //////////////////////////////////////////////////////////////////////////////////
 
   var renderer = new WebGLRenderer({
-      antialias: false,
+      antialias: true,
       alpha: true,
       logarithmicDepthBuffer: false,
       reverseDepthBuffer: false,
   });
-
-  var mesh1;
-
   var width = 640; var height = 480;
 
   let markerNotYetFound = true;
   let markerFound = false;
 
-  renderer.setPixelRatio(window.devicePixelRatio);
 
   renderer.setClearColor(new Color('lightgrey'), 0)
   renderer.setSize( width, height );
   renderer.domElement.style.position = 'absolute'
   renderer.domElement.style.top = '0px'
   renderer.domElement.style.left = '0px'
+
   document.body.appendChild( renderer.domElement );
 
   // init scene and camera
@@ -64,15 +61,17 @@
   ////////////////////////////////////////////////////////////////////////////////
 
   var arToolkitSource = new ArToolkitSource({
-      sourceType : 'webcam'
+      sourceType : 'webcam',
+      sourceWidth: window.innerWidth > window.innerHeight ? 640 : 480,
+      sourceHeight: window.innerWidth > window.innerHeight ? 480 : 640
   })
 
     function onResize(){
         arToolkitSource.onResizeElement()
         arToolkitSource.copyElementSizeTo(renderer.domElement)
-        //if( arToolkitContext.arController !== null ){
-        arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-        //}
+        if( arToolkitContext.arController !== null ){
+            arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+        }
     }
 
   arToolkitSource.init(function onReady(){
@@ -87,21 +86,6 @@
       onResize()
   })
 
-    function getSourceOrientation() {
-        console.log(
-            "actual source dimensions",
-            arToolkitSource.domElement.clientWidth,
-            arToolkitSource.domElement.clientHeight
-        );
-
-        if (arToolkitSource.domElement.clientWidth > arToolkitSource.domElement.clientHeight) {
-            console.log("source orientation", "landscape");
-            return "landscape";
-        } else {
-            console.log("source orientation", "portrait");
-            return "portrait";
-        }
-    }
 
   ////////////////////////////////////////////////////////////////////////////////
   //          initialize arToolkitContext
@@ -110,11 +94,7 @@
   // create atToolkitContext
   var arToolkitContext = new ArToolkitContext({
       detectionMode: 'mono',
-      canvasWidth: width,
-      canvasHeight: height,
-  }, {
-      sourceWidth: width,
-      sourceHeight: height,
+      canvasWidth: width
   })
     arToolkitContext.near = 100;
     arToolkitContext.far = 10000;
@@ -122,10 +102,34 @@
   // initialize it
   arToolkitContext.init(function onCompleted(){
       // copy projection matrix to camera
-      //camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+      camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+      //camera.near = 10;
+      //camera.far = 10000;
+      //camera.updateProjectionMatrix();
       arToolkitContext.arController.orientation = getSourceOrientation();
       arToolkitContext.arController.options.orientation = getSourceOrientation();
   })
+
+
+    function getSourceOrientation() {
+        if (!arToolkitSource) {
+            return null;
+        }
+
+        console.log(
+            'actual source dimensions',
+            arToolkitSource.domElement.videoWidth,
+            arToolkitSource.domElement.videoHeight
+        );
+
+        if (arToolkitSource.domElement.videoWidth > arToolkitSource.domElement.videoHeight) {
+            console.log('source orientation', 'landscape');
+            return 'landscape';
+        } else {
+            console.log('source orientation', 'portrait');
+            return 'portrait';
+        }
+    }
 
   ////////////////////////////////////////////////////////////////////////////////
   //          Create a ArMarkerControls
@@ -137,6 +141,7 @@
 
     var contentRoot = new Group();
     scene.add(contentRoot);
+
 
   var markerControls = new ArMarkerControls(arToolkitContext, camTrackerRoot, {
       type : 'nft',
