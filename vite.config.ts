@@ -8,5 +8,6 @@ export default defineConfig({
   assetsInclude: ['**/*.glb','**/*.png'],
   server: {
     https: true,
-  }
+  },
+  base: "https://whales.rosspopovs.com"
 })
