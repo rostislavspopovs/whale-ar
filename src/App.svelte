@@ -224,9 +224,9 @@
     {#if !markerFound}
         <div id="marker-lost-notice">
             {#if markerNotYetFound}
-                <h5>Please point camera at postcard</h5>
+                <h2>Please point camera at postcard</h2>
             {:else}
-                <h5>Marker lost, return to postcard</h5>
+                <h2>Marker lost, return to postcard</h2>
             {/if}
         </div>
     {/if}

@@ -39,23 +39,23 @@ export class ARScene {
             console.log(`Item loaded: ${url}`)
         }
 
-        function instatiateWhale(prefab, name){
+        function instatiateWhale(prefab, id){
             let whale = prefab.clone();
-            whale.name = name;
+            whale.name = id;
             whales.add(whale);
         }
 
         this.loadingManager.onLoad = function ( ) {
             console.log(`All Items Loaded`);
             whales.name = "Whales";
-            instatiateWhale(whale1prefab, "whale1");
-            instatiateWhale(whale2prefab, "whale2");
-            instatiateWhale(whale3prefab, "whale3");
-            instatiateWhale(whale1prefab, "whale4");
-            instatiateWhale(whale2prefab, "whale5");
-            instatiateWhale(whale3prefab, "whale6");
-            instatiateWhale(whale1prefab, "whale7");
-            instatiateWhale(whale2prefab, "whale8");
+            instatiateWhale(whale1prefab, "spermWhale");
+            instatiateWhale(whale2prefab, "humpbackWhale");
+            instatiateWhale(whale3prefab, "blueWhale");
+            instatiateWhale(whale1prefab, "orcaWhale");
+            instatiateWhale(whale2prefab, "belugaWhale");
+            instatiateWhale(whale3prefab, "bowheadWhale");
+            instatiateWhale(whale1prefab, "pilotWhale");
+            instatiateWhale(whale2prefab, "finWhale");
 
             whaleCount = whales.children.length;
             whalesDistributeOnCircle(whales, whaleCircleRadius);

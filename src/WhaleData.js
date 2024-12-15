@@ -1,16 +1,16 @@
-let whales = undefined;
 let loaded = false;
 export class WhaleData{
-    constructor(){
-        fetch("../src/data/whaleData/whales.json")
+    static async getWhales()
+    {
+        const whales = await fetch("../src/data/whaleData/whales.json")
             .then(response => response.json())
             .then(json => {
-                whales = json;
                 loaded = true;
-                console.log(whales);
+                return json;
             });
+        return new WhaleData(whales);
     }
-    get whales(){
-        return whales;
+    constructor(whales){
+        this.whales = whales;
     }
 }
