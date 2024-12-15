@@ -22,6 +22,7 @@ let camera;
 
 let interactionManager;
 
+let whaleData;
 
 export class ARScene {
 
@@ -53,6 +54,8 @@ export class ARScene {
             instatiateWhale(whale1prefab, "whale4");
             instatiateWhale(whale2prefab, "whale5");
             instatiateWhale(whale3prefab, "whale6");
+            instatiateWhale(whale1prefab, "whale7");
+            instatiateWhale(whale2prefab, "whale8");
 
             whaleCount = whales.children.length;
             whalesDistributeOnCircle(whales, whaleCircleRadius);
@@ -109,7 +112,7 @@ function whalesDistributeOnCircle(whales, radius){
         let z = ( radius ) * Math.sin( angle );
 
         whales.children[i].position.set(x,0,z);
-        whales.children[i].rotation.set(0,Math.PI-(2*Math.PI * i/6),Math.PI/3);
+        whales.children[i].rotation.set(0,Math.PI-(2*Math.PI * i/n),Math.PI/3);
     }
 }
 
@@ -152,8 +155,4 @@ function update(){
     whales.lookAt(camera.position);
     whales.rotateX(Math.PI/2)
     whales.rotateY(totalTime/6);
-
-    //if(selectedWhale != null){
-      //  selectedWhale
-    //}
 }
