@@ -1,16 +1,11 @@
 
 <script lang="ts">
-    import {Canvas} from '@threlte/core'
     import {
-        Camera,
         Color,
         Group,
         Scene,
         WebGLRenderer,
-        TextureLoader,
-        MeshBasicMaterial,
-        PlaneGeometry,
-        Mesh, Clock, AmbientLight, BoxGeometry, PerspectiveCamera, Vector3, Vector4
+        AmbientLight, PerspectiveCamera
     } from "three";
     import { ArToolkitSource, ArToolkitContext, ArMarkerControls} from '@ar-js-org/ar.js/three.js/build/ar-threex.js';
     import {ARScene} from "./ARScene.js"
@@ -21,18 +16,17 @@
   //////////////////////////////////////////////////////////////////////////////////
 
   var renderer = new WebGLRenderer({
-      antialias: true,
+      antialias: false,
       alpha: true,
       logarithmicDepthBuffer: false,
       reverseDepthBuffer: false,
   });
-  var width = 640; var height = 480;
-
+  var width = 1080; var height = 1920;
   let markerNotYetFound = true;
   let markerFound = false;
 
   renderer.setClearColor(new Color('lightgrey'), 0)
-  renderer.setSize( width, height );
+  renderer.setSize( height, width );
   renderer.domElement.style.position = 'absolute'
   renderer.domElement.style.top = '0px'
   renderer.domElement.style.left = '0px'
@@ -47,7 +41,7 @@
   //////////////////////////////////////////////////////////////////////////////////
 
   // Create a camera
-  var camera = new PerspectiveCamera(40, width / height, 1000, 10000);
+  var camera = new PerspectiveCamera(40, height / width, 10, 10000);
   camera.near = 10;
   camera.far = 10000;
   camera.updateProjectionMatrix();
@@ -60,10 +54,15 @@
   //          handle arToolkitSource
   ////////////////////////////////////////////////////////////////////////////////
 
+
+
   var arToolkitSource = new ArToolkitSource({
       sourceType : 'webcam',
-      sourceWidth: window.innerWidth > window.innerHeight ? 640 : 480,
-      sourceHeight: window.innerWidth > window.innerHeight ? 480 : 640
+      //Quality
+      sourceWidth: height*0.8,
+      sourceHeight: width*0.8,
+      displayWidth: height*0.8,
+      displayHeight: width*0.8,
   })
 
     function onResize(){
@@ -94,7 +93,8 @@
   // create atToolkitContext
   var arToolkitContext = new ArToolkitContext({
       detectionMode: 'mono',
-      canvasWidth: width
+      canvasWidth: height*0.8,
+      canvasHeight: width*0.8
   })
     arToolkitContext.near = 100;
     arToolkitContext.far = 10000;
@@ -102,34 +102,13 @@
   // initialize it
   arToolkitContext.init(function onCompleted(){
       // copy projection matrix to camera
-      camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+      //camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
       camera.near = 10;
       camera.far = 10000;
       camera.updateProjectionMatrix();
-      arToolkitContext.arController.orientation = getSourceOrientation();
-      arToolkitContext.arController.options.orientation = getSourceOrientation();
+      arToolkitContext.arController.orientation = "portrait";
+      arToolkitContext.arController.options.orientation = "portrait";
   })
-
-
-    function getSourceOrientation() {
-        if (!arToolkitSource) {
-            return null;
-        }
-
-        console.log(
-            'actual source dimensions',
-            arToolkitSource.domElement.videoWidth,
-            arToolkitSource.domElement.videoHeight
-        );
-
-        if (arToolkitSource.domElement.videoWidth > arToolkitSource.domElement.videoHeight) {
-            console.log('source orientation', 'landscape');
-            return 'landscape';
-        } else {
-            console.log('source orientation', 'portrait');
-            return 'portrait';
-        }
-    }
 
   ////////////////////////////////////////////////////////////////////////////////
   //          Create a ArMarkerControls
