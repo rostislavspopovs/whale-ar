@@ -93,7 +93,10 @@
 
   // create atToolkitContext
   var arToolkitContext = new ArToolkitContext({
+      debug: true,
       detectionMode: 'mono',
+      patternRatio: 0.85,
+      labelingMode: 'black_region',
       canvasWidth: width
   })
     arToolkitContext.near = 100;
@@ -143,15 +146,15 @@
     scene.add(contentRoot);
 
 
-  var markerControls = new ArMarkerControls(arToolkitContext, camTrackerRoot, {
-      type : 'nft',
-      size : 0.16,
-      descriptorsUrl : "../src/data/patterns/whale1",
-      changeMatrixMode: "cameraTransformMatrix",
-      smooth: true,
-      smoothCount: 30,
-      smoothTolerance: 0.1,
-      smoothThreshold: 15
+  var markerControls = new ArMarkerControls(arToolkitContext, contentRoot, {
+      type : 'pattern',
+      size : 0.1,
+      patternUrl : "../src/data/patterns/pattern-whale-marker.patt",
+      changeMatrixMode: "modelViewMatrix",
+      //smooth: true,
+      //smoothCount: 30,
+      //smoothTolerance: 0.1,
+      //smoothThreshold: 15
   })
 
     //var markerLostNotice = document.getElementById("marker-lost-notice");
@@ -160,8 +163,9 @@
         if(markerFound == false){
             markerNotYetFound = false;
             markerFound = true;
-            camera.position.lerp(camTrackerRoot.position, 1);
-            camera.quaternion.slerp(camTrackerRoot.quaternion, 1);
+            console.log("Marker Found");
+            // camera.position.lerp(camTrackerRoot.position, 1);
+            // camera.quaternion.slerp(camTrackerRoot.quaternion, 1);
 
             renderer.domElement.style.opacity = "1";
 
@@ -197,10 +201,10 @@
 
       requestAnimationFrame(update);
 
-      if(camera.position.distanceTo(camTrackerRoot.position) < 1000) {
-          camera.position.lerp(camTrackerRoot.position, 0.15);
-          camera.quaternion.slerp(camTrackerRoot.quaternion, 0.15);
-      }
+      // if(camera.position.distanceTo(camTrackerRoot.position) < 1000) {
+      //     camera.position.lerp(camTrackerRoot.position, 0.15);
+      //     camera.quaternion.slerp(camTrackerRoot.quaternion, 0.15);
+      // }
 
 
       if ( arToolkitSource.ready !== false )
@@ -218,9 +222,9 @@
 </script>
 
 <main>
-    <div class="arjs-loader">
-        <div class="arjs-loader-spinner"></div>
-    </div>
+<!--    <div class="arjs-loader">-->
+<!--        <div class="arjs-loader-spinner"></div>-->
+<!--    </div>-->
     {#if !markerFound}
         <div id="marker-lost-notice">
             {#if markerNotYetFound}

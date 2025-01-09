@@ -91,8 +91,8 @@ export class ARScene {
 
         this.arScene.add(whales);
 
-        this.arScene.scale.set(75, 75, 75);
-        this.arScene.position.set(200, 150, -170);
+        //this.arScene.scale.set(75, 75, 75);
+        //this.arScene.position.set(200, 150, -170);
 
     }
 
