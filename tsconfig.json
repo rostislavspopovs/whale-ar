@@ -14,7 +14,8 @@
     "allowJs": true,
     "checkJs": true,
     "isolatedModules": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
+    "jsx": "react"
   },
   "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/data/patterns/*.patt, src/assets/*.png"],
   "references": [{ "path": "./tsconfig.node.json" }]
