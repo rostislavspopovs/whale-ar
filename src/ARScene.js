@@ -42,7 +42,7 @@ export class ARScene {
         function instatiateWhale(prefab, id){
             let whale = prefab.clone();
             whale.name = id;
-            whales.add(whale);
+            //whales.add(whale);
         }
 
         this.loadingManager.onLoad = function ( ) {
@@ -65,7 +65,7 @@ export class ARScene {
         }
 
         let gltfLoader = new GLTFLoader(this.loadingManager);
-        gltfLoader.load("../src/assets/earth-lowpoly.glb", (earth) => {
+        gltfLoader.load("../src/assets/earth.glb", (earth) => {
             earthObject = earth.scene;
             this.arScene.add(earthObject);
         }, undefined, function ( error ) {

@@ -62,8 +62,8 @@
 
   var arToolkitSource = new ArToolkitSource({
       sourceType : 'webcam',
-      sourceWidth: window.innerWidth > window.innerHeight ? 640 : 480,
-      sourceHeight: window.innerWidth > window.innerHeight ? 480 : 640
+      sourceWidth: 640,
+      sourceHeight: 480
   })
 
     function onResize(){
@@ -146,11 +146,11 @@
     scene.add(contentRoot);
 
 
-  var markerControls = new ArMarkerControls(arToolkitContext, contentRoot, {
+  var markerControls = new ArMarkerControls(arToolkitContext, camera, {
       type : 'pattern',
-      size : 0.1,
+      size : 0.15,
       patternUrl : "../src/data/patterns/pattern-whale-marker.patt",
-      changeMatrixMode: "modelViewMatrix",
+      changeMatrixMode: "cameraTransformMatrix",
       //smooth: true,
       //smoothCount: 30,
       //smoothTolerance: 0.1,
@@ -232,6 +232,12 @@
             {:else}
                 <h2>Marker lost, return to postcard</h2>
             {/if}
+        </div>
+    {/if}
+    {#if markerFound}
+        <div id="camera-rotpos">
+            <h5>Cam Pos: {camera.position.toArray().toString()}</h5>
+            <h5>Cam Rot: {camera.rotation.toArray().toString()}</h5>
         </div>
     {/if}
     <WhaleDescription/>
