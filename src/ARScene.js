@@ -1,6 +1,18 @@
-import {BoxGeometry, Clock, Color, Group, LoadingManager, Mesh, MeshBasicMaterial, Object3D, TextureLoader} from "three";
+import {
+    AmbientLight,
+    BoxGeometry,
+    Clock,
+    Color,
+    Group,
+    LoadingManager,
+    Mesh,
+    MeshBasicMaterial,
+    Object3D, Plane,
+    TextureLoader, Vector3
+} from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { InteractionManager } from 'three.interactive';
+import {BoxLineGeometry} from "three/examples/jsm/geometries/BoxLineGeometry.js";
 
 let deltaTime = 0
 let totalTime = 0;
@@ -35,6 +47,9 @@ export class ARScene {
 
         this.arScene = new Group();
 
+        var light = new AmbientLight(Color.NAMES.white, 2.2);
+        this.arScene.add(light);
+
         this.loadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
             console.log(`Item loaded: ${url}`)
         }
@@ -67,6 +82,8 @@ export class ARScene {
         let gltfLoader = new GLTFLoader(this.loadingManager);
         gltfLoader.load("../src/assets/earth.glb", (earth) => {
             earthObject = earth.scene;
+            earthObject.scale.set(2,2,2);
+            earthObject.position.set(3.2, -1, -1.5);
             this.arScene.add(earthObject);
         }, undefined, function ( error ) {
             console.error( error );
@@ -91,8 +108,12 @@ export class ARScene {
 
         this.arScene.add(whales);
 
-        //this.arScene.scale.set(75, 75, 75);
-        //this.arScene.position.set(200, 150, -170);
+        //var boxMesh = new Mesh(new BoxGeometry(8,0.1,4.1));
+        //boxMesh.position.set(3.2, -1, -1.5);
+        //this.arScene.add(boxMesh);
+
+        this.arScene.scale.set(1, 1, 1);
+        this.arScene.position.set(0, 1, 0);
 
     }
 
