@@ -53,7 +53,9 @@
         var markerDummy = new Group();
         scene.add(markerDummy);
 
-        var markerRoot = document.querySelector("#ar-box").object3D;
+        var markerRoot = document.querySelector("#ar-root").object3D;
+        scene.add(markerRoot);
+        console.log(markerRoot);
 
         var source = new THREEAR.Source({ renderer, camera });
 
@@ -72,7 +74,7 @@
 
             var patternMarker = new THREEAR.PatternMarker({
                 patternUrl: '../src/data/patterns/pattern-whale-marker.patt',
-                markerObject: markerDummy,
+                markerObject: markerRoot,
                 minConfidence: 0.01,
             });
 
@@ -81,7 +83,6 @@
             controller.addEventListener('markerFound', function(event) {
                 markerFound = true;
                 console.log('markerFound', event);
-                listSceneEntities();
             });
             controller.addEventListener('markerLost', function(event) {
                 markerFound = false;
@@ -94,18 +95,18 @@
                 requestAnimationFrame( animate );
                 controller.update( source.domElement );
                 renderer.render( scene, camera );
-                if(markerFound) {
-                    markerRoot.position.lerp(markerDummy.position, 0.9);
-                    markerRoot.quaternion.slerp(markerDummy.quaternion, 0.9);
-                }
+                // if(markerFound) {
+                //     markerRoot.position.lerp(markerDummy.position, 0.9);
+                //     markerRoot.quaternion.slerp(markerDummy.quaternion, 0.9);
+                // }
             });
 
             let sceneEl = document.querySelector("#a-frame-scene");
             var redundantCam = sceneEl.querySelectorAll('a-entity')[0];
-            sceneEl.removeChild(redundantCam);
+            //sceneEl.removeChild(redundantCam);
             sceneEl.removeChild(sceneEl.querySelector('.a-canvas'));
             
-            listSceneEntities();
+            //listSceneEntities();
             function listSceneEntities(){
                 let sceneEl = document.querySelector("#a-frame-scene");
    
@@ -119,9 +120,7 @@
 </script>
 
 <a-scene inspect id="a-frame-scene">
-    <a-box id="ar-box"
-            scale="1 1 1"
-            position="0 0 -3"
-            material="color: red;">
-    </a-box>
+    <a-entity id="ar-root">
+        <ARScene/> 
+    </a-entity>
 </a-scene>
