@@ -6,7 +6,7 @@ import mkcert from "vite-plugin-mkcert"
 export default defineConfig({
   plugins: [svelte(), mkcert()],
   //plugins: [svelte()]
-  assetsInclude: ['**/*.glb','**/*.png', "**/*.patt"],
+  assetsInclude: ['**/*.glb','**/*.png', "**/*.patt", "**/*.svelte"],
    server: {
      https: true,
    },
