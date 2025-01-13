@@ -23,7 +23,6 @@
         MeshNormalMaterial, DoubleSide
     } from "three";
     import ARScene from "./ARScene.svelte";
-    import { mount } from 'svelte'
 
     var markerFound = false;
 
@@ -54,8 +53,8 @@
         scene.add(markerDummy);
 
         var markerRoot = document.querySelector("#ar-root").object3D;
+        markerRoot.visible = false;
         scene.add(markerRoot);
-        console.log(markerRoot);
 
         var source = new THREEAR.Source({ renderer, camera });
 
@@ -63,26 +62,30 @@
             patternRatio:0.9,
             canvasWidth: 640,
             canvasHeight: 480,
-            detectionMode: "mono_and_matrix",
+            detectionMode: "mono",
+            maxDetectionRate: 60,
             imageSmoothingEnabled:false,
             positioning: {
                 smooth:true,
-                smoothCount: 8,
+                smoothCount: 3,
                 smoothTolerance: 0.01,
-                smoothThreshold: 4
+                smoothThreshold: 2
             }}).then((controller) => {
 
             var patternMarker = new THREEAR.PatternMarker({
                 patternUrl: '../src/data/patterns/pattern-whale-marker.patt',
-                markerObject: markerRoot,
+                markerObject: markerDummy,
                 minConfidence: 0.01,
             });
 
+            const markerFoundEventGlobal = new CustomEvent('onMarkerFound');
 
             controller.trackMarker(patternMarker);
             controller.addEventListener('markerFound', function(event) {
                 markerFound = true;
+                markerRoot.visible = true;
                 console.log('markerFound', event);
+                document.dispatchEvent(markerFoundEventGlobal);
             });
             controller.addEventListener('markerLost', function(event) {
                 markerFound = false;
@@ -95,10 +98,10 @@
                 requestAnimationFrame( animate );
                 controller.update( source.domElement );
                 renderer.render( scene, camera );
-                // if(markerFound) {
-                //     markerRoot.position.lerp(markerDummy.position, 0.9);
-                //     markerRoot.quaternion.slerp(markerDummy.quaternion, 0.9);
-                // }
+                if(markerFound) {
+                    markerRoot.position.lerp(markerDummy.position, 0.9);
+                    markerRoot.quaternion.slerp(markerDummy.quaternion, 0.9);
+                }
             });
 
             let sceneEl = document.querySelector("#a-frame-scene");
@@ -119,7 +122,7 @@
     };
 </script>
 
-<a-scene inspect id="a-frame-scene">
+<a-scene inspect id="a-frame-scene" light="defaultLightsEnabled: false">
     <a-entity id="ar-root">
         <ARScene/> 
     </a-entity>
