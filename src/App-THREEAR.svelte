@@ -38,6 +38,8 @@
     renderer.domElement.style.left = '0px'
     document.body.appendChild( renderer.domElement );
 
+    let arScene; //bound through svelte
+
     window.onload = run;
 
     function run () {
@@ -65,6 +67,7 @@
             detectionMode: "mono",
             maxDetectionRate: 60,
             imageSmoothingEnabled:false,
+            lostTimeout: 500,
             positioning: {
                 smooth:true,
                 smoothCount: 3,
@@ -78,17 +81,19 @@
                 minConfidence: 0.01,
             });
 
-            const markerFoundEventGlobal = new CustomEvent('onMarkerFound');
+            let sceneEl = document.querySelector("#a-frame-scene");
 
             controller.trackMarker(patternMarker);
             controller.addEventListener('markerFound', function(event) {
                 markerFound = true;
                 markerRoot.visible = true;
                 console.log('markerFound', event);
-                document.dispatchEvent(markerFoundEventGlobal);
+                arScene.onMarkerFound();
+                //document.dispatchEvent(new Event('onMarkerFound'));
             });
             controller.addEventListener('markerLost', function(event) {
                 markerFound = false;
+                arScene.onMarkerLost();
                 console.log('markerLost', event);
             });
 
@@ -104,7 +109,6 @@
                 }
             });
 
-            let sceneEl = document.querySelector("#a-frame-scene");
             var redundantCam = sceneEl.querySelectorAll('a-entity')[0];
             //sceneEl.removeChild(redundantCam);
             sceneEl.removeChild(sceneEl.querySelector('.a-canvas'));
@@ -124,6 +128,6 @@
 
 <a-scene inspect id="a-frame-scene" light="defaultLightsEnabled: false">
     <a-entity id="ar-root">
-        <ARScene/> 
+        <ARScene bind:this={arScene}/>
     </a-entity>
 </a-scene>
