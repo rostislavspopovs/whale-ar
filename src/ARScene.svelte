@@ -75,8 +75,7 @@
                 animation__init1position="property: position; to: 0 0 0; dur:1000; easing: easeOutCubic; startEvents: onMarkerFound; delay: 0"
                 animation__init2position="property: position; from: 0 0 0; to: 1.8 0 -1.1; dur:1000; easing: easeOutCubic; startEvents: onMarkerFound; delay: 1000"
                 animation__init2scale="property: scale; to: 4.4 0.1 2.9; dur:1000; easing: easeOutCubic; startEvents: onMarkerFound; delay: 1000"
-                animation__exit1opacity="property: ground-box.gbOpacity; to: 0.0; dur:500; easing: easeOutCubic; startEvents: onMarkerLost; delay: 0"
-                animation__reinit1opacity="property: ground-box.gbOpacity; to: 1.0; dur:500; easing: easeInCubic; startEvents: onMarkerFoundAgain; delay: 0"
+                animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 1000"
         ></a-box>
 
         <a-entity
@@ -84,8 +83,11 @@
                 position="1.8 2 -1.2"
                 scale="0 0 0"
                 material="transparent: true; opacity: 0;"
-                animation__init3scale="property: scale; to: 1 1 1; dur:500; easing: easeOutCubic; startEvents: onMarkerFound, onMarkerFoundAgain; delay: 1000"
-                animation__lost1scale="property: scale; to: 0 0 0; dur:500; easing: easeOutCubic; startEvents: onMarkerLost; delay: 0"
+                animation__init3scale="property: scale; to: 1 1 1; dur:500; easing: easeOutBack; startEvents: onMarkerFound; delay: 1750"
+
+                animation__lost1scale="property: scale; to: 0 0 0; dur:200; easing: easeInBack; startEvents: onMarkerLost; delay: 0"
+
+                animation__reinit1scale="property: scale; to: 1 1 1; dur:200; easing: easeOutBack; startEvents: onMarkerFoundAgain; delay: 200"
         ></a-entity>
 </a-entity>
 

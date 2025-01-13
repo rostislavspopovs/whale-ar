@@ -64,14 +64,14 @@
             patternRatio:0.9,
             canvasWidth: 640,
             canvasHeight: 480,
-            detectionMode: "mono",
+            detectionMode: "mono_and_matrix",
             maxDetectionRate: 60,
-            imageSmoothingEnabled:false,
-            lostTimeout: 500,
+            imageSmoothingEnabled:true,
+            lostTimeout: 350,
             positioning: {
                 smooth:true,
-                smoothCount: 3,
-                smoothTolerance: 0.01,
+                smoothCount: 4,
+                smoothTolerance: 0.008,
                 smoothThreshold: 2
             }}).then((controller) => {
 
@@ -104,8 +104,8 @@
                 controller.update( source.domElement );
                 renderer.render( scene, camera );
                 if(markerFound) {
-                    markerRoot.position.lerp(markerDummy.position, 0.9);
-                    markerRoot.quaternion.slerp(markerDummy.quaternion, 0.9);
+                    markerRoot.position.lerp(markerDummy.position, 0.99);
+                    markerRoot.quaternion.slerp(markerDummy.quaternion, 0.99);
                 }
             });
 
