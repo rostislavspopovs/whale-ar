@@ -1,44 +1,7 @@
-/*html,*/
-/*body {*/
-/*  !*height: 100% !important;*!*/
-/*  !*width: 100% !important;*!*/
-/*  margin: 0 !important;*/
-/*  overflow: hidden;*/
-/*  position: fixed !important;*/
-/*}*/
-
-
-/*video {*/
-/*  position: fixed !important;*/
-/*  width: 100% !important;*/
-/*  height: 100% !important;*/
-/*  margin: 0 !important;*/
-/*  !*scale: 0.4 !important;*!*/
-/*  position: fixed !important;*/
-/*  object-fit: fill !important;*/
-/*}*/
-
-/*canvas{*/
-/*  position: fixed !important;*/
-/*  width: 100% !important;*/
-/*  height: 100% !important;*/
-/*  margin: 0 !important;*/
-/*  object-fit: contain !important;*/
-
-/*}*/
-
-/*#app, a-scene{*/
-/*  position: fixed !important;*/
-/*  width: 100% !important;*/
-/*  height: 100%  !important;*/
-/*  margin: 0 !important;*/
-/*  object-fit: contain !important;*/
-/*}*/
-
-
-
-
-
+canvas{
+  pointer-events: none !important;
+  z-index: -1;
+}
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -94,24 +57,40 @@
     transform: rotate(360deg);
   }
 }
-
-#marker-lost-notice{
-  color: white;
+#start-button-div{
+  z-index: 100;
   display: flex;
-  justify-content: center;
+  justify-content: end;
+  flex-direction: column;
   align-items: center;
   text-align: center;
-  min-height: 100vh;
+  min-height: 70vh;
 }
 
-#whale-description{
-  width: 100%;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
-  text-align: left;
-  position: absolute;
-  bottom:0px;
-  white-space: pre-line;
-  padding: 10px;
+a.startbutton{
+  display:inline-block;
+  padding:0.7em 1.4em;
+  margin:0 0.3em 0.3em 0;
+  border-radius:0.15em;
+  box-sizing: border-box;
+  text-decoration:none;
+  font-family:'Roboto',sans-serif;
+  text-transform:uppercase;
+  font-weight:400;
+  color:#FFFFFF;
+  background-color:#3369ff;
+  box-shadow:inset 0 -0.6em 0 -0.35em rgba(0,0,0,0.17);
+  text-align:center;
+  position:relative;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
+a.startbutton:active{
+  top:0.1em;
+  box-shadow:inset 0 -0.50em 0 -0.35em rgba(0,0,0,0.17);
+}
+
+
+
 

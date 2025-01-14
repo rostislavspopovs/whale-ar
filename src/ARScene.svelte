@@ -57,8 +57,8 @@
         export const onMarkerLost = () => {markerFound = false; };
 </script>
 
-<div>
-        <h1>Marker found: {markerFound}</h1>
+<div id="start-button-div">
+        <a class="startbutton">START</a>
 </div>
 
 
@@ -80,7 +80,7 @@
 
         <a-entity
                 gltf-model="../src/assets/earth.glb"
-                position="1.8 2 -1.2"
+                position="1.9 2 -1.2"
                 scale="0 0 0"
                 material="transparent: true; opacity: 0;"
                 animation__init3scale="property: scale; to: 1 1 1; dur:500; easing: easeOutBack; startEvents: onMarkerFound; delay: 1750"
@@ -89,6 +89,7 @@
 
                 animation__reinit1scale="property: scale; to: 1 1 1; dur:200; easing: easeOutBack; startEvents: onMarkerFoundAgain; delay: 200"
         ></a-entity>
+
 </a-entity>
 
 
