@@ -1,6 +1,10 @@
 canvas{
   /*pointer-events: none !important;*/
-  z-index: 1;
+  z-index: -1;
+}
+
+video{
+  opacity: 1;
 }
 
 :root {

@@ -1,7 +1,10 @@
-<script lang="ts">
-    import {Canvas} from '@threlte/core'
+
+<script>
+// @ts-nocheck
+
+    import * as THREEAR from "threear";
+    import "aframe";
     import {
-        Camera,
         Color,
         Group,
         Scene,
@@ -9,240 +12,166 @@
         TextureLoader,
         MeshBasicMaterial,
         PlaneGeometry,
-        Mesh, Clock, AmbientLight, BoxGeometry, PerspectiveCamera, Vector3, Vector4
+        Mesh,
+        Clock,
+        AmbientLight,
+        BoxGeometry,
+        PerspectiveCamera,
+        Vector3,
+        Vector4,
+        TorusKnotGeometry,
+        MeshNormalMaterial, DoubleSide
     } from "three";
-    import {THREEx, ARjs} from "@ar-js-org/ar.js-threejs"
-    import {ARScene} from "./ARScene.js"
-    import WhaleDescription from "./WhaleDescription.svelte";
+    import ARScene from "./ARScene.svelte";
+    import {InteractionManager} from "three.interactive";
 
-    //////////////////////////////////////////////////////////////////////////////////
-    //		Init
-    //////////////////////////////////////////////////////////////////////////////////
+    var markerFound = false;
+    var markerFoundPrev = false;
+    var latestScanPatternUrl = "";
 
     var renderer = new WebGLRenderer({
         antialias: true,
-        alpha: true,
-        logarithmicDepthBuffer: false,
-        reverseDepthBuffer: false,
+        alpha: true
     });
-    var width = 640;
-    var height = 480;
-
-    let markerNotYetFound = true;
-    let markerFound = false;
-
     renderer.setClearColor(new Color('lightgrey'), 0)
-    renderer.setSize(width, height);
+    renderer.setPixelRatio( 3 );
+    renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.domElement.style.position = 'absolute'
     renderer.domElement.style.top = '0px'
     renderer.domElement.style.left = '0px'
+    document.body.appendChild( renderer.domElement );
 
-    document.body.appendChild(renderer.domElement);
+    let arScene; //bound through svelte
 
-    // init scene and camera
-    var scene = new Scene();
+    let interactionManager;
 
-    //////////////////////////////////////////////////////////////////////////////////
-    //		Initialize a basic camera
-    //////////////////////////////////////////////////////////////////////////////////
+    window.onload = run;
 
-    // Create a camera
-    var camera = new PerspectiveCamera(40, width / height, 1000, 10000);
-    camera.near = 10;
-    camera.far = 10000;
-    camera.updateProjectionMatrix();
-    scene.add(camera);
+    function run () {
 
-    var light = new AmbientLight(Color.NAMES.white, 2.2);
-    scene.add(light);
+        var scene = document.querySelector('a-scene').object3D;
 
-    ////////////////////////////////////////////////////////////////////////////////
-    //          handle arToolkitSource
-    ////////////////////////////////////////////////////////////////////////////////
+        let camera = new PerspectiveCamera();
+        camera.name = "JS Perspective Camera";
+        scene.camera = camera;
 
-    var arToolkitSource = new THREEx.ArToolkitSource({
-        sourceType: 'webcam',
-        sourceWidth: 640,
-        sourceHeight: 480
-    })
+        scene.add(camera);
 
-    function onResize() {
-        arToolkitSource.onResizeElement()
-        arToolkitSource.copyElementSizeTo(renderer.domElement)
-        if (arToolkitContext.arController !== null) {
-            arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-        }
-    }
+        interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
 
-    arToolkitSource.init(function onReady() {
-            // use a resize to fullscreen mobile devices
-            setTimeout(function () {
-                onResize()
-            }, 1000);
-        },
-        function onError() {
-            console.log("Error initialising arTooklitSource");
-        })
+        var markerDummy = new Group();
+        scene.add(markerDummy);
 
-    // handle resize
-    window.addEventListener('resize', function () {
-        onResize()
-    })
+        var markerRoot = document.querySelector("#ar-root").object3D;
+        markerRoot.visible = false;
+        scene.add(markerRoot);
 
+        var source = new THREEAR.Source({ renderer, camera });
 
-    ////////////////////////////////////////////////////////////////////////////////
-    //          initialize arToolkitContext
-    ////////////////////////////////////////////////////////////////////////////////
+        THREEAR.initialize({source: source,
+            patternRatio:0.8,
+            canvasWidth: 640,
+            canvasHeight: 480,
+            detectionMode: "mono_and_matrix",
+            maxDetectionRate: 60,
+            imageSmoothingEnabled:true,
+            lostTimeout: 350,
+            positioning: {
+                smooth:true,
+                smoothCount: 4,
+                smoothTolerance: 0.008,
+                smoothThreshold: 2
+            }}).then((controller) => {
 
-    THREEx.ArToolkitContext.baseURL = '@ar-js-org/ar.js-threejs';
-    var arToolkitContext = new THREEx.ArToolkitContext({
-        debug: false,
-        detectionMode: 'mono_and_matrix',
-        patternRatio: 0.85,
-        labelingMode: 'black_region',
-        canvasWidth: width,
-        cameraParametersUrl: "../src/data/camera_para.dat",
-    })
+            var spermMarker = new THREEAR.PatternMarker({
+                patternUrl: '../src/data/patterns/pattern-sperm.patt',
+                markerObject: markerDummy,
+                minConfidence: 0.01,
+            });
+            var blueMarker = new THREEAR.PatternMarker({
+                patternUrl: '../src/data/patterns/pattern-blue.patt',
+                markerObject: markerDummy,
+                minConfidence: 0.01,
+            });
+            var humpbackMarker = new THREEAR.PatternMarker({
+                patternUrl: '../src/data/patterns/pattern-humpback.patt',
+                markerObject: markerDummy,
+                minConfidence: 0.01,
+            });
 
-    arToolkitContext.init(function onCompleted() {
-        // copy projection matrix to camera
-        camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-        camera.near = 10;
-        camera.far = 10000;
-        camera.updateProjectionMatrix();
-        arToolkitContext.arController.orientation = getSourceOrientation();
-        arToolkitContext.arController.options.orientation = getSourceOrientation();
-    })
+            let sceneEl = document.querySelector("#a-frame-scene");
 
+            controller.trackMarker(spermMarker);
+            controller.trackMarker(blueMarker);
+            controller.trackMarker(humpbackMarker);
 
-    function getSourceOrientation() {
-        if (!arToolkitSource) {
-            return null;
-        }
+            controller.addEventListener('markerFound', function(event) {
+                markerFound = true;
+                markerRoot.visible = true;
+                latestScanPatternUrl = event.marker.patternUrl.split('/')[4].slice(0,-5);
+            });
+            controller.addEventListener('markerLost', function(event) {
+                markerFound = false;
+            });
 
-        console.log(
-            'actual source dimensions',
-            arToolkitSource.domElement.videoWidth,
-            arToolkitSource.domElement.videoHeight
-        );
+            requestAnimationFrame(function animate(nowMsec){
 
-        if (arToolkitSource.domElement.videoWidth > arToolkitSource.domElement.videoHeight) {
-            console.log('source orientation', 'landscape');
-            return 'landscape';
-        } else {
-            console.log('source orientation', 'portrait');
-            return 'portrait';
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //          Create a ArMarkerControls
-    ////////////////////////////////////////////////////////////////////////////////
-
-    // init controls for camera
-    var camTrackerRoot = new Group();
-    scene.add(camTrackerRoot);
-
-    var contentRoot = new Group();
-    scene.add(contentRoot);
+                requestAnimationFrame( animate );
+                controller.update( source.domElement );
+                renderer.render( scene, camera );
+                if(markerFound) {
+                    markerRoot.position.lerp(markerDummy.position, 0.99);
+                    markerRoot.quaternion.slerp(markerDummy.quaternion, 0.99);
+                }
+                if(markerFound && !markerFoundPrev){
+                    onMarkerFound();
+                }
+                else if (!markerFound && markerFoundPrev){
+                    onMarkerLost();
+                }
+                markerFoundPrev = markerFound;
+            });
 
 
-    var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
-        type: 'pattern',
-        size: 0.15,
-        patternUrl: "../src/data/patterns/pattern-whale-marker.patt",
-        changeMatrixMode: "cameraTransformMatrix",
-        //smooth: true,
-        //smoothCount: 30,
-        //smoothTolerance: 0.1,
-        //smoothThreshold: 15
-    })
+            function onMarkerFound(){
+                arScene.onMarkerFound(latestScanPatternUrl);
+                AFRAME.ANIME({
+                    targets: 'video',
+                    opacity: 0.25,
+                    easing: 'easeOutSine',
+                    duration: 500
+                })
+            }
 
-    //var markerLostNotice = document.getElementById("marker-lost-notice");
+            function onMarkerLost(){
+                arScene.onMarkerLost();
+                AFRAME.ANIME({
+                    targets: 'video',
+                    opacity: 1,
+                    easing: 'easeOutSine',
+                    duration: 500
+                })
+            }
 
-    markerControls.addEventListener("markerFound", () => {
-        if (markerFound == false) {
-            markerNotYetFound = false;
-            markerFound = true;
-            console.log("Marker Found");
-            // camera.position.lerp(camTrackerRoot.position, 1);
-            // camera.quaternion.slerp(camTrackerRoot.quaternion, 1);
-
-            renderer.domElement.style.opacity = "1";
-
-            //markerLostNotice.style.visibility = "hidden";
-        }
-    })
-
-    window.addEventListener("markerLost", () => {
-        if (markerFound == true) {
-            markerFound = false;
-            console.log("Marker Lost");
-            renderer.domElement.style.opacity = "0.4";
-
-            //markerLostNotice.style.visibility = "visible";
-        }
-    })
-
-
-    scene.visible = false;
-
-    //////////////////////////////////////////////////////////////////////////////////
-    //		add an object in the scene
-    //////////////////////////////////////////////////////////////////////////////////
-
-    var arScene = new ARScene(renderer, camera);
-    contentRoot.add(arScene.group);
-
-
-    update();
-
-    function update() {
-
-        requestAnimationFrame(update);
-
-        // if(camera.position.distanceTo(camTrackerRoot.position) < 1000) {
-        //     camera.position.lerp(camTrackerRoot.position, 0.15);
-        //     camera.quaternion.slerp(camTrackerRoot.quaternion, 0.15);
-        // }
-
-
-        if (arToolkitSource.ready !== false)
-            arToolkitContext.update(arToolkitSource.domElement);
-
-        scene.visible = true;
-
-        render();
-    }
-
-    function render() {
-        renderer.render(scene, camera);
-    }
-
+            var redundantCam = sceneEl.querySelectorAll('a-entity')[0];
+            //sceneEl.removeChild(redundantCam);
+            sceneEl.removeChild(sceneEl.querySelector('.a-canvas'));
+            
+            //listSceneEntities();
+            function listSceneEntities(){
+                let sceneEl = document.querySelector("#a-frame-scene");
+   
+                var els = sceneEl.querySelectorAll('*');
+                    for (var i = 0; i < els.length; i++) {
+                        console.log(els[i]);
+                    }
+                }
+        });
+    };
 </script>
 
-<main>
-    <!--    <div class="arjs-loader">-->
-    <!--        <div class="arjs-loader-spinner"></div>-->
-    <!--    </div>-->
-    {#if !markerFound}
-        <div id="marker-lost-notice">
-            {#if markerNotYetFound}
-                <h2>Please point camera at postcard</h2>
-            {:else}
-                <h2>Marker lost, return to postcard</h2>
-            {/if}
-        </div>
-    {/if}
-    {#if markerFound}
-        <div id="camera-rotpos">
-            <h5>Cam Pos: {camera.position.toArray().toString()}</h5>
-            <h5>Cam Rot: {camera.rotation.toArray().toString()}</h5>
-        </div>
-    {/if}
-    <WhaleDescription/>
-</main>
-
-
-
-
+<a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" cursor="rayOrigin: mouse">
+    <a-entity id="ar-root">
+        <ARScene bind:this={arScene} {interactionManager}/>
+    </a-entity>
+</a-scene>

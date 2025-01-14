@@ -1,74 +1,10 @@
 {
-  "spermWhale":{
-    "name":"Sperm Whales",
+  "sperm-pattern":{
+    "name":"Sperm Whale",
     "scientific-name": "Physeter Macrocephalus",
     "description":"IUCN Status: Most Concern \nLength: 13-16m \nPopulation: ~84,000",
-    "model":"whale1.glb",
-    "image": "spermWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "humpbackWhale":{
-    "name":"Humpback Whales",
-    "scientific-name": "Megaptera Novaeangliae",
-    "description":"IUCN Status: Least Concern \nLength: 17-23m \nPopulation: ~24,000",
-    "model":"whale2.glb",
-    "image": "humpbackWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "blueWhale":{
-    "name":"Blue Whales",
-    "scientific-name": "Balaenoptera Musculus",
-    "description":"IUCN Status: Most Concern \nLength: 23-26m \nPopulation: ~43,000",
-    "model":"whale3.glb",
-    "image": "blueWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "orcaWhale":{
-    "name":"Orca Whales",
-    "scientific-name": "Orcinus Orca",
-    "description":"IUCN Status: Least Concern \nLength: 26-28m \nPopulation: ~21,000",
-    "model":"whale1.glb",
-    "image": "orcaWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "belugaWhale":{
-    "name":"Beluga Whales",
-    "scientific-name": "Delphinapterus Leucas",
-    "description":"IUCN Status: Most Concern \nLength: 5-16m \nPopulation: ~77,000",
-    "model":"whale2.glb",
-    "image": "belugaWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "bowheadWhale":{
-    "name":"Bowhead Whales",
-    "scientific-name": "Balaena Mysticetus",
-    "description":"IUCN Status: Least Concern \nLength: 30-33m \nPopulation: ~43,000",
-    "model":"whale3.glb",
-    "image": "bowheadWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "pilotWhale":{
-    "name":"Pilot Whales",
-    "scientific-name": "Globicephala Macrorhynchus",
-    "description":"IUCN Status: Most Concern \nLength: 22-26m \nPopulation: ~98,000",
-    "model":"whale1.glb",
-    "image": "pilotWhale.png",
-    "selectionSound":"whaleSelection.ogg",
-    "migrationSound":"whaleMigration.ogg"
-  },
-  "finWhale":{
-    "name":"Fin Whales",
-    "scientific-name": "Balaenoptera Physalus",
-    "description":"IUCN Status: Least Concern \nLength: 36-46m \nPopulation: ~11,000",
-    "model":"whale2.glb",
-    "image": "finWhale.png",
-    "selectionSound":"whaleSelection.ogg",
+    "model":"sperm-whale.glb",
+    "discoverSound":"whaleDiscover.ogg",
     "migrationSound":"whaleMigration.ogg"
   }
 }
