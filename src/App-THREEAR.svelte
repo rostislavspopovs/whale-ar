@@ -23,6 +23,7 @@
         MeshNormalMaterial, DoubleSide
     } from "three";
     import ARScene from "./ARScene.svelte";
+import {InteractionManager} from "three.interactive";
 
     var markerFound = false;
 
@@ -40,6 +41,8 @@
 
     let arScene; //bound through svelte
 
+    let interactionManager;
+
     window.onload = run;
 
     function run () {
@@ -49,7 +52,10 @@
         let camera = new PerspectiveCamera();
         camera.name = "JS Perspective Camera";
         scene.camera = camera;
+
         scene.add(camera);
+
+        interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
 
         var markerDummy = new Group();
         scene.add(markerDummy);
@@ -61,7 +67,7 @@
         var source = new THREEAR.Source({ renderer, camera });
 
         THREEAR.initialize({source: source,
-            patternRatio:0.9,
+            patternRatio:0.8,
             canvasWidth: 640,
             canvasHeight: 480,
             detectionMode: "mono_and_matrix",
@@ -76,7 +82,7 @@
             }}).then((controller) => {
 
             var patternMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/pattern-whale-marker.patt',
+                patternUrl: '../src/data/patterns/pattern-humpback.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.01,
             });
@@ -126,8 +132,8 @@
     };
 </script>
 
-<a-scene inspect id="a-frame-scene" light="defaultLightsEnabled: false">
+<a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" cursor="rayOrigin: mouse">
     <a-entity id="ar-root">
-        <ARScene bind:this={arScene}/>
+        <ARScene bind:this={arScene} {interactionManager}/>
     </a-entity>
 </a-scene>

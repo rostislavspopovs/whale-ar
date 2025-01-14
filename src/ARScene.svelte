@@ -1,10 +1,16 @@
 
 <script>
         import { DoubleSide, MeshBasicMaterial } from "three";
+        import {InteractionManager} from "three.interactive";
+
+        export let interactionManager;
+
         let markerFound = false;
         let markerFoundLf= false;
         let markerFoundPrev = false;
+        let markerFoundTime = 0;
         console.log("ARScene Script");
+
 
         AFRAME.registerComponent("ar-scene-component", {
                 init: function(){
@@ -30,6 +36,7 @@
                                         this.sceneChildren[j].dispatchEvent(new CustomEvent('onMarkerLost'));
                                 }
                         }
+
                         markerFoundLf = markerFound;
                 }
         });
@@ -52,15 +59,19 @@
                 }
         });
 
+        AFRAME.registerComponent("globe", {
+                init: function(){
+                        interactionManager.add(this.el.object3D);
+                        this.el.object3D.addEventListener('click', () => {
+                                console.log("clicked");
+                        })
+                }
+        });
+
 
         export const onMarkerFound = () => {markerFound = true; };
         export const onMarkerLost = () => {markerFound = false; };
 </script>
-
-<div id="start-button-div">
-        <a class="startbutton">START</a>
-</div>
-
 
 <a-entity ar-scene-component>
         <a-light type="directional" position="10 10 -10" rotation="-90 0 0" target="#directionaltarget">
@@ -78,11 +89,12 @@
                 animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 1000"
         ></a-box>
 
-        <a-entity
+        <a-entity globe
                 gltf-model="../src/assets/earth.glb"
                 position="1.9 2 -1.2"
                 scale="0 0 0"
                 material="transparent: true; opacity: 0;"
+
                 animation__init3scale="property: scale; to: 1 1 1; dur:500; easing: easeOutBack; startEvents: onMarkerFound; delay: 1750"
 
                 animation__lost1scale="property: scale; to: 0 0 0; dur:200; easing: easeInBack; startEvents: onMarkerLost; delay: 0"
@@ -91,6 +103,12 @@
         ></a-entity>
 
 </a-entity>
+
+<div class="notice">
+        {#if markerFound}
+                <h3 style="text-shadow: black 0px 0px 5px;">Tap on the globe to learn more!</h3>
+        {/if}
+</div>
 
 
 

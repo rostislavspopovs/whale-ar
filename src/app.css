@@ -1,6 +1,6 @@
 canvas{
-  pointer-events: none !important;
-  z-index: -1;
+  /*pointer-events: none !important;*/
+  z-index: 1;
 }
 
 :root {
@@ -57,7 +57,7 @@ canvas{
     transform: rotate(360deg);
   }
 }
-#start-button-div{
+.notice{
   z-index: 100;
   display: flex;
   justify-content: end;
