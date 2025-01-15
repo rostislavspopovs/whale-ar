@@ -75,10 +75,18 @@
         }
     });
 
-
+    const whaleIds = ["sperm-whale","blue-whale","humpback-whale"];
     export const onMarkerFound = (url) => {
         markerFound = true;
         patternUrl = url;
+        console.log(patternUrl);
+        whaleIds.forEach((whaleId) => {
+            document.getElementById(whaleId).setAttribute("visible", false);
+            if(whaleId == patternUrl){
+                console.log(document.getElementById(whaleId));
+                document.getElementById(whaleId).setAttribute("visible", true);
+            }
+        })
     };
     export const onMarkerLost = () => {
         markerFound = false;
@@ -87,7 +95,8 @@
 
 <a-entity ar-scene-component>
 
-    <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 2"></a-entity>
+    <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
+    <a-entity light="type: ambient; color: #ffffff; intensity: 5"></a-entity>
 
     <!--        <a-box ground-box id="groundBox"-->
     <!--                scale="1 0.1 1"-->
@@ -129,12 +138,31 @@
         <a-entity id="whaleParent"
               animation__rotate="property: rotation; from: 0 0 0; to: 0 -360 0; dur:70000; easing: linear; loop: true"
             >
-            <a-entity
+            <a-entity id="sperm-whale"
+                      visible="false"
                       gltf-model="../src/assets/sperm-whale.glb"
                       animation-mixer
                       position="0 0 3"
                       scale="0.3 0.3 0.3"
                       rotation="0 -90 0"
+            ></a-entity>
+            <a-entity
+                    id="blue-whale"
+                    visible="false"
+                    gltf-model="../src/assets/blue-whale.glb"
+                    animation-mixer
+                    position="0 0 3"
+                    scale="0.1 0.1 0.1"
+                    rotation="0 -90 0"
+            ></a-entity>
+            <a-entity
+                    id="humpback-whale"
+                    visible="false"
+                    gltf-model="../src/assets/humpback-whale.glb"
+                    animation-mixer
+                    position="0 0 3"
+                    scale="0.1 0.1 0.1"
+                    rotation="0 -90 0"
             ></a-entity>
         </a-entity>
     </a-entity>
@@ -143,7 +171,9 @@
 
 <div class="notice">
     {#if markerFound}
-        <h3 style="text-shadow: black 0px 0px 5px;">You've discovered </h3>
+        <h1 style="text-shadow: black 0px 0px 5px;">You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
+        <h3 style="text-shadow: black 0px 0px 5px;">Tap on the globe to learn more</h3>
+
     {/if}
 </div>
 

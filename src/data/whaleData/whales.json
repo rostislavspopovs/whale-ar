@@ -1,10 +1,11 @@
 {
-  "sperm-pattern":{
-    "name":"Sperm Whale",
-    "scientific-name": "Physeter Macrocephalus",
-    "description":"IUCN Status: Most Concern \nLength: 13-16m \nPopulation: ~84,000",
-    "model":"sperm-whale.glb",
-    "discoverSound":"whaleDiscover.ogg",
-    "migrationSound":"whaleMigration.ogg"
+  "sperm-whale":{
+    "name":"Sperm Whale"
+  },
+  "blue-whale":{
+    "name":"Blue Whale"
+  },
+  "humpback-whale":{
+    "name":"Humpback Whale"
   }
 }

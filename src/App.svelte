@@ -24,6 +24,7 @@
     });
     renderer.setClearColor(new Color('lightgrey'), 0)
     renderer.setPixelRatio( 3 );
+    renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.domElement.style.position = 'absolute'
     renderer.domElement.style.top = '0px'
@@ -38,12 +39,13 @@
 
     function run () {
 
-        // async function loadWhaleData(){
-        //     window.whaleXML = await WhaleData.getWhales();
-        // }
-        // loadWhaleData().then(_=> {
-        //     window.whaleXML = window.whaleXML["whales"];
-        // });
+        async function loadWhaleData(){
+            window.whaleXML = await WhaleData.getWhales();
+        }
+        loadWhaleData().then(_=> {
+            window.whaleXML = window.whaleXML["whales"];
+            console.log(window.whaleXML);
+        });
 
         var scene = document.querySelector('a-scene').object3D;
 
@@ -65,7 +67,7 @@
         var source = new THREEAR.Source({ renderer, camera });
 
         THREEAR.initialize({source: source,
-            patternRatio:0.8,
+            patternRatio:0.9,
             canvasWidth: 640,
             canvasHeight: 480,
             detectionMode: "mono_and_matrix",
@@ -80,17 +82,17 @@
             }}).then((controller) => {
 
             var spermMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/pattern-sperm.patt',
+                patternUrl: '../src/data/patterns/sperm-whale.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.01,
             });
             var blueMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/pattern-blue.patt',
+                patternUrl: '../src/data/patterns/blue-whale.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.01,
             });
             var humpbackMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/pattern-humpback.patt',
+                patternUrl: '../src/data/patterns/humpback-whale.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.01,
             });
