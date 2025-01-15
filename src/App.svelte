@@ -1,29 +1,18 @@
 
 <script>
 // @ts-nocheck
-
     import * as THREEAR from "threear";
     import "aframe";
     import {
         Color,
         Group,
-        Scene,
         WebGLRenderer,
-        TextureLoader,
-        MeshBasicMaterial,
-        PlaneGeometry,
-        Mesh,
-        Clock,
-        AmbientLight,
-        BoxGeometry,
         PerspectiveCamera,
-        Vector3,
-        Vector4,
-        TorusKnotGeometry,
-        MeshNormalMaterial, DoubleSide
     } from "three";
     import ARScene from "./ARScene.svelte";
     import {InteractionManager} from "three.interactive";
+    import {WhaleData} from "./WhaleData.js";
+
 
     var markerFound = false;
     var markerFoundPrev = false;
@@ -48,6 +37,13 @@
     window.onload = run;
 
     function run () {
+
+        // async function loadWhaleData(){
+        //     window.whaleXML = await WhaleData.getWhales();
+        // }
+        // loadWhaleData().then(_=> {
+        //     window.whaleXML = window.whaleXML["whales"];
+        // });
 
         var scene = document.querySelector('a-scene').object3D;
 

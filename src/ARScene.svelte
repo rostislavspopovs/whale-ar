@@ -2,6 +2,7 @@
     import {DoubleSide, MeshBasicMaterial} from "three";
     import {InteractionManager} from "three.interactive";
     import 'aframe-extras/loaders/index.js';
+    import {WhaleData} from "./WhaleData.js";
     export let interactionManager;
 
     let markerFound = false;
@@ -17,6 +18,7 @@
     AFRAME.registerComponent("ar-scene-component", {
         init: function () {
             console.log("arScene init");
+            console.log(window.whaleXML);
             this.sceneChildren = [];
         },
         tick: function () {
