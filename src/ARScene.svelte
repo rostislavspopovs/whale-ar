@@ -66,7 +66,6 @@
         },
         update: function () {
             this.gbMaterial.opacity = this.data.gbOpacity;
-            console.log(this.data.gbOpacity);
         }
     });
 

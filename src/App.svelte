@@ -67,7 +67,7 @@
         var source = new THREEAR.Source({ renderer, camera });
 
         THREEAR.initialize({source: source,
-            patternRatio:0.9,
+            patternRatio:0.6,
             canvasWidth: 640*2,
             canvasHeight: 480*2,
             detectionMode: "mono_and_matrix",
@@ -120,6 +120,7 @@
 
                 requestAnimationFrame( animate );
                 controller.update( source.domElement );
+                interactionManager.update();
                 renderer.render( scene, camera );
                 if(markerFound) {
                     markerRoot.position.lerp(markerDummy.position, 1);
