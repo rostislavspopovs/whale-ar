@@ -6,6 +6,7 @@
     "name":"Blue Whale"
   },
   "humpback-whale":{
-    "name":"Humpback Whale"
+    "name":"Humpback Whale",
+    "audio": "humpback-call.mp3"
   }
 }

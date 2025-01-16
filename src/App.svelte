@@ -23,7 +23,7 @@
         alpha: true
     });
     renderer.setClearColor(new Color('lightgrey'), 0)
-    renderer.setPixelRatio( 3 );
+    renderer.setPixelRatio( 2 );
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.domElement.style.position = 'absolute'
@@ -68,17 +68,17 @@
 
         THREEAR.initialize({source: source,
             patternRatio:0.9,
-            canvasWidth: 640,
-            canvasHeight: 480,
+            canvasWidth: 640*2,
+            canvasHeight: 480*2,
             detectionMode: "mono_and_matrix",
             maxDetectionRate: 60,
-            imageSmoothingEnabled:true,
+            imageSmoothingEnabled:false,
             lostTimeout: 350,
             positioning: {
                 smooth:true,
-                smoothCount: 4,
-                smoothTolerance: 0.008,
-                smoothThreshold: 2
+                smoothCount: 3,
+                smoothTolerance: 0.002,
+                smoothThreshold: 1
             }}).then((controller) => {
 
             var spermMarker = new THREEAR.PatternMarker({
@@ -96,6 +96,10 @@
                 markerObject: markerDummy,
                 minConfidence: 0.01,
             });
+
+            var shadow = document.createElement("div");
+            shadow.id = "shadow";
+            document.querySelector("video").appendChild(shadow);
 
             let sceneEl = document.querySelector("#a-frame-scene");
 
@@ -118,8 +122,8 @@
                 controller.update( source.domElement );
                 renderer.render( scene, camera );
                 if(markerFound) {
-                    markerRoot.position.lerp(markerDummy.position, 0.99);
-                    markerRoot.quaternion.slerp(markerDummy.quaternion, 0.99);
+                    markerRoot.position.lerp(markerDummy.position, 1);
+                    markerRoot.quaternion.slerp(markerDummy.quaternion, 1);
                 }
                 if(markerFound && !markerFoundPrev){
                     onMarkerFound();
@@ -135,7 +139,7 @@
                 arScene.onMarkerFound(latestScanPatternUrl);
                 AFRAME.ANIME({
                     targets: 'video',
-                    opacity: 0.25,
+                    opacity: 0.6,
                     easing: 'easeOutSine',
                     duration: 500
                 })
@@ -167,7 +171,6 @@
         });
     };
 </script>
-
 <a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" cursor="rayOrigin: mouse">
     <a-entity id="ar-root">
         <ARScene bind:this={arScene} {interactionManager}/>

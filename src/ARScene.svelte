@@ -3,6 +3,8 @@
     import {InteractionManager} from "three.interactive";
     import 'aframe-extras/loaders/index.js';
     import {WhaleData} from "./WhaleData.js";
+    import {Howl, Howler} from 'howler';
+
     export let interactionManager;
 
     let markerFound = false;
@@ -11,6 +13,8 @@
     let markerFoundTime = 0;
 
     var patternUrl;
+
+    let whaleAudioClip;
 
     console.log("ARScene Script");
 
@@ -79,12 +83,14 @@
     export const onMarkerFound = (url) => {
         markerFound = true;
         patternUrl = url;
-        console.log(patternUrl);
         whaleIds.forEach((whaleId) => {
             document.getElementById(whaleId).setAttribute("visible", false);
             if(whaleId == patternUrl){
-                console.log(document.getElementById(whaleId));
                 document.getElementById(whaleId).setAttribute("visible", true);
+                whaleAudioClip = new Howl({
+                    src: ['../src/assets/'+window.whaleXML[whaleId]["audio"]]
+                })
+                setTimeout(()=>{whaleAudioClip.play()}, 500);
             }
         })
     };
@@ -119,7 +125,7 @@
     ></a-box>
 
 
-    <a-entity click-to-start id="launchGlobe"
+    <a-entity click-to-start id="launchScene"
               position="0 3 0"
               scale="0 0 0"
               rotation="0 45 0"
@@ -127,23 +133,21 @@
               animation__lost1scale="property: scale; to: 0 0 0; dur:200; easing: easeInBack; startEvents: onMarkerLost; delay: 0"
               animation__reinit1scale="property: scale; to: 1 1 1; dur:200; easing: easeOutBack; startEvents: onMarkerFoundAgain; delay: 200"
     >
-        <a-entity
-                  gltf-model="../src/assets/earth.glb"
-                  position="0 0 0"
-                  scale="2 2 2"
-                  rotation="0 0 0"
-                  animation__rotate="property: rotation; from: 0 0 0; to: 0 -360 0; dur:200000; easing: linear; loop:true"
-        ></a-entity>
+<!--        <a-entity-->
+<!--                  gltf-model="../src/assets/earth.glb"-->
+<!--                  position="0 0 0"-->
+<!--                  scale="2 2 2"-->
+<!--                  rotation="0 0 0"-->
+<!--                  animation__rotate="property: rotation; from: 0 0 0; to: 0 -360 0; dur:200000; easing: linear; loop:true"-->
+<!--        ></a-entity>-->
 
-        <a-entity id="whaleParent"
-              animation__rotate="property: rotation; from: 0 0 0; to: 0 -360 0; dur:70000; easing: linear; loop: true"
-            >
+        <a-entity id="whaleParent">
             <a-entity id="sperm-whale"
                       visible="false"
                       gltf-model="../src/assets/sperm-whale.glb"
                       animation-mixer
-                      position="0 0 3"
-                      scale="0.3 0.3 0.3"
+                      position="0 1 0"
+                      scale="0.6 0.6 0.6"
                       rotation="0 -90 0"
             ></a-entity>
             <a-entity
@@ -151,8 +155,8 @@
                     visible="false"
                     gltf-model="../src/assets/blue-whale.glb"
                     animation-mixer
-                    position="0 0 3"
-                    scale="0.1 0.1 0.1"
+                    position="0 1 0"
+                    scale="0.2 0.2 0.2"
                     rotation="0 -90 0"
             ></a-entity>
             <a-entity
@@ -160,8 +164,8 @@
                     visible="false"
                     gltf-model="../src/assets/humpback-whale.glb"
                     animation-mixer
-                    position="0 0 3"
-                    scale="0.1 0.1 0.1"
+                    position="0 1 0"
+                    scale="0.2 0.2 0.2"
                     rotation="0 -90 0"
             ></a-entity>
         </a-entity>
@@ -171,8 +175,8 @@
 
 <div class="notice">
     {#if markerFound}
-        <h1 style="text-shadow: black 0px 0px 5px;">You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
-        <h3 style="text-shadow: black 0px 0px 5px;">Tap on the globe to learn more</h3>
+        <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
+        <h2>Tap on the whale to learn more</h2>
 
     {/if}
 </div>
