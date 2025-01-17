@@ -5,16 +5,15 @@
     import {WhaleData} from "./WhaleData.js";
     import {Howl, Howler} from 'howler';
 
-    export let interactionManager;
-
-    let markerFound = false;
+    let markerFound = $state(false);
     let markerFoundLf = false;
     let markerFoundPrev = false;
-    let markerFoundTime = 0;
 
-    var patternUrl;
+    var patternUrl = $state();
 
     let whaleAudioClip;
+
+    let {arController} = $props();
 
     console.log("ARScene Script");
 
@@ -22,7 +21,6 @@
     AFRAME.registerComponent("ar-scene-component", {
         init: function () {
             console.log("arScene init");
-            console.log(window.whaleXML);
             this.sceneChildren = [];
         },
         tick: function () {
@@ -71,9 +69,20 @@
 
     AFRAME.registerComponent("click-to-start", {
         init: function () {
-            interactionManager.add(this.el.object3D);
-            this.el.object3D.addEventListener('click', () => {
-                console.log("clicked");
+            var obj = this.el.object3D;
+            console.log(obj);
+            window.interactionManager.add(obj);
+            obj.addEventListener('click', () => {
+                if(markerFound){
+                    console.log(arController);
+                    arController.parameters.maxDetectionRate = 0;
+                    AFRAME.ANIME({
+                        targets: 'video',
+                        opacity: 0,
+                        easing: 'easeOutSine',
+                        duration: 500
+                    })
+                }
             })
         }
     });
@@ -124,7 +133,7 @@
     ></a-box>
 
 
-    <a-entity click-to-start id="launchScene"
+    <a-entity id="launchScene"
               position="0 3 0"
               scale="0 0 0"
               rotation="0 45 0"
@@ -141,6 +150,11 @@
 <!--        ></a-entity>-->
 
         <a-entity id="whaleParent">
+            <a-box click-to-start
+                   position="0 1 0"
+                   scale="6 1.2 1.2"
+                   visible="false">
+            </a-box>
             <a-entity id="sperm-whale"
                       visible="false"
                       gltf-model="../src/assets/sperm-whale.glb"
@@ -148,7 +162,8 @@
                       position="0 1 0"
                       scale="0.6 0.6 0.6"
                       rotation="0 -90 0"
-            ></a-entity>
+            >
+            </a-entity>
             <a-entity
                     id="blue-whale"
                     visible="false"
@@ -157,13 +172,14 @@
                     position="0 1 0"
                     scale="0.2 0.2 0.2"
                     rotation="0 -90 0"
-            ></a-entity>
+            >
+            </a-entity>
             <a-entity
                     id="humpback-whale"
                     visible="false"
                     gltf-model="../src/assets/humpback-whale.glb"
                     animation-mixer
-                    position="0 1 0"
+                    position="0 0 0"
                     scale="0.2 0.2 0.2"
                     rotation="0 -90 0"
             ></a-entity>

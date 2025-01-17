@@ -33,7 +33,7 @@
 
     let arScene; //bound through svelte
 
-    let interactionManager;
+    let arController;
 
     window.onload = run;
 
@@ -55,7 +55,7 @@
 
         scene.add(camera);
 
-        interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
+        window.interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
 
         var markerDummy = new Group();
         scene.add(markerDummy);
@@ -81,46 +81,43 @@
                 smoothThreshold: 1
             }}).then((controller) => {
 
+                arController = controller;
             var spermMarker = new THREEAR.PatternMarker({
                 patternUrl: '../src/data/patterns/sperm-whale.patt',
                 markerObject: markerDummy,
-                minConfidence: 0.01,
+                minConfidence: 0.05,
             });
             var blueMarker = new THREEAR.PatternMarker({
                 patternUrl: '../src/data/patterns/blue-whale.patt',
                 markerObject: markerDummy,
-                minConfidence: 0.01,
+                minConfidence: 0.05,
             });
             var humpbackMarker = new THREEAR.PatternMarker({
                 patternUrl: '../src/data/patterns/humpback-whale.patt',
                 markerObject: markerDummy,
-                minConfidence: 0.01,
+                minConfidence: 0.05,
             });
-
-            var shadow = document.createElement("div");
-            shadow.id = "shadow";
-            document.querySelector("video").appendChild(shadow);
 
             let sceneEl = document.querySelector("#a-frame-scene");
 
-            controller.trackMarker(spermMarker);
-            controller.trackMarker(blueMarker);
-            controller.trackMarker(humpbackMarker);
+            arController.trackMarker(spermMarker);
+            arController.trackMarker(blueMarker);
+            arController.trackMarker(humpbackMarker);
 
-            controller.addEventListener('markerFound', function(event) {
+            arController.addEventListener('markerFound', function(event) {
                 markerFound = true;
                 markerRoot.visible = true;
                 latestScanPatternUrl = event.marker.patternUrl.split('/')[4].slice(0,-5);
             });
-            controller.addEventListener('markerLost', function(event) {
+            arController.addEventListener('markerLost', function(event) {
                 markerFound = false;
             });
 
             requestAnimationFrame(function animate(nowMsec){
 
                 requestAnimationFrame( animate );
-                controller.update( source.domElement );
-                interactionManager.update();
+                arController.update( source.domElement );
+                window.interactionManager.update();
                 renderer.render( scene, camera );
                 if(markerFound) {
                     markerRoot.position.lerp(markerDummy.position, 1);
@@ -172,8 +169,8 @@
         });
     };
 </script>
-<a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" cursor="rayOrigin: mouse">
+<a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false">
     <a-entity id="ar-root">
-        <ARScene bind:this={arScene} {interactionManager}/>
+        <ARScene bind:this={arScene} arController={arController}/>
     </a-entity>
 </a-scene>
