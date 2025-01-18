@@ -1,5 +1,5 @@
 <script>
-    import {DoubleSide, MeshBasicMaterial} from "three";
+    import {DoubleSide, Group, MeshBasicMaterial, Object3D, Vector3} from "three";
     import {InteractionManager} from "three.interactive";
     import 'aframe-extras/loaders/index.js';
     import {WhaleData} from "./WhaleData.js";
@@ -13,10 +13,11 @@
 
     let whaleAudioClip;
 
-    let {arController} = $props();
+    let {arController, camera, scene, markerDummy, onArFinish} = $props();
+
+    let whaleClicked = $state(false);
 
     console.log("ARScene Script");
-
 
     AFRAME.registerComponent("ar-scene-component", {
         init: function () {
@@ -74,14 +75,7 @@
             window.interactionManager.add(obj);
             obj.addEventListener('click', () => {
                 if(markerFound){
-                    console.log(arController);
-                    arController.parameters.maxDetectionRate = 0;
-                    AFRAME.ANIME({
-                        targets: 'video',
-                        opacity: 0,
-                        easing: 'easeOutSine',
-                        duration: 500
-                    })
+                    launchApp()
                 }
             })
         }
@@ -105,23 +99,64 @@
     export const onMarkerLost = () => {
         markerFound = false;
     };
+
+    function launchApp(){
+        whaleClicked = true;
+        arController.parameters.maxDetectionRate = 0;
+        var launchTimeline = AFRAME.ANIME.timeline();
+        launchTimeline.add({
+            targets: 'video',
+            opacity: 0,
+            easing: 'easeOutSine',
+            duration: 500
+        }).add({
+            targets: [camera.position],
+            x: 0,
+            y: 0,
+            z: 0,
+            easing:"easeOutCubic",
+            duration: 1000,
+        },0).add({
+            targets: [camera.rotation],
+            x: 0,
+            y: 0,
+            z: 0,
+            easing:"easeOutCubic",
+            duration: 1000,
+        },0).add({
+            targets: [markerDummy.position],
+            x: 1,
+            y: -5,
+            z: -10,
+            easing:"easeOutCubic",
+            duration: 1000,
+        },0).add({
+            targets: [markerDummy.rotation],
+            x: 0,
+            y: -0.4,
+            z: 0,
+            easing:"easeOutCubic",
+            duration: 1000,
+        },0).add({
+            targets: [markerDummy.position],
+            x: -10,
+            y: -5,
+            z: -30,
+            easing:"easeInQuad",
+            duration: 2500,
+        },1000).add({
+            targets: [markerDummy.rotation],
+            x: 0,
+            y: -1.5,
+            z: 0,
+            easing:"easeInQuad",
+            duration: 2500,
+        },1000);
+        setTimeout(onArFinish, 2500);
+    }
 </script>
 
-<a-entity ar-scene-component>
-
-    <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
-    <a-entity light="type: ambient; color: #ffffff; intensity: 5"></a-entity>
-
-    <!--        <a-box ground-box id="groundBox"-->
-    <!--                scale="1 0.1 1"-->
-    <!--                position="0 2 0"-->
-    <!--                material="transparent: true, opacity: 0"-->
-    <!--                animation__init1opacity="property: ground-box.gbOpacity; to: 1.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 0"-->
-    <!--                animation__init1position="property: position; to: 0 0 0; dur:1000; easing: easeOutCubic; startEvents: onMarkerFound; delay: 0"-->
-    <!--                animation__init2position="property: position; from: 0 0 0; to: 1.8 0 -1.1; dur:1000; easing: easeOutCubic; startEvents: onMarkerFound; delay: 1000"-->
-    <!--                animation__init2scale="property: scale; to: 4.4 0.1 2.9; dur:1000; easing: easeOutCubic; startEvents: onMarkerFound; delay: 1000"-->
-    <!--                animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 1000"-->
-    <!--        ></a-box>-->
+<a-entity ar-scene-component id="ar-scene">
 
     <a-box ground-box id="groundBox"
            scale="1 0.1 1"
@@ -129,14 +164,14 @@
            material="transparent: true, opacity: 0"
            animation__init1opacity="property: ground-box.gbOpacity; to: 1.0; dur:400; easing: easeInCubic; startEvents: onMarkerFound; delay: 0"
            animation__init1scale="property: scale; from: 3 0.1 3; to: 1 0.1 1; dur:400; easing: easeOutCubic; startEvents: onMarkerFound; delay: 0"
-           animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 1800"
+           animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 1000"
     ></a-box>
 
 
     <a-entity id="launchScene"
               position="0 3 0"
               scale="0 0 0"
-              rotation="0 45 0"
+              rotation="0 0 0"
               animation__init3scale="property: scale; to: 1 1 1; dur:500; easing: easeOutBack; startEvents: onMarkerFound; delay: 1000"
               animation__lost1scale="property: scale; to: 0 0 0; dur:200; easing: easeInBack; startEvents: onMarkerLost; delay: 0"
               animation__reinit1scale="property: scale; to: 1 1 1; dur:200; easing: easeOutBack; startEvents: onMarkerFoundAgain; delay: 200"
@@ -188,13 +223,14 @@
 
 </a-entity>
 
-<div class="notice">
-    {#if markerFound}
-        <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
-        <h2>Tap on the whale to learn more</h2>
+{#if !whaleClicked}
+    <div class="notice">
+        {#if markerFound}
+            <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
+            <h2>Tap on the whale to learn more</h2>
 
-    {/if}
-</div>
-
+        {/if}
+    </div>
+{/if}
 
 
