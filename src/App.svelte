@@ -1,4 +1,7 @@
 <script>
+    import {Vector2} from "three";
+    import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
     let appLaunched = $state(false);
     console.log("App Scene");
     export const appInit = () => {
@@ -27,8 +30,15 @@
             y: 1,
             z: 0,
             easing: 'easeOutQuart',
-            duration: 1500
+            duration: 1500,
+            complete: setupGlobeControls
         })
+        let prevMousePos;
+        function setupGlobeControls() {
+            console.log(globe.object3D);
+            window.orbitControls.target = globe.object3D.position;
+            window.orbitControls.autoRotate = false;
+        }
     };
 </script>
 <a-entity id="globe"

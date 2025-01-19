@@ -1,18 +1,18 @@
-
 <script>
 // @ts-nocheck
     import * as THREEAR from "threear";
     import "aframe";
-    import {
-        Color,
-        Group,
-        WebGLRenderer,
-        PerspectiveCamera,
-    } from "three";
+import {
+    Color,
+    Group,
+    WebGLRenderer,
+    PerspectiveCamera, Object3D,
+} from "three";
     import ARScene from "./ARScene.svelte";
     import {InteractionManager} from "three.interactive";
     import {WhaleData} from "./WhaleData.js";
     import App from "./App.svelte";
+    import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
     var markerFound = false;
@@ -65,6 +65,8 @@
         scene.add(camera);
 
         window.interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
+        window.orbitControls = new OrbitControls( camera, renderer.domElement );
+        orbitControls.enabled = true;
 
         markerDummy = new Group();
         scene.add(markerDummy);
@@ -139,6 +141,8 @@
                     onMarkerLost();
                 }
                 markerFoundPrev = markerFound;
+
+                window.orbitControls.update();
             });
 
 
@@ -179,6 +183,9 @@
             initialiseAppFunc = function (){
                 setTimeout(function(){appLaunched=true}, 500);
                 appScene.appInit();
+                window.orbitControls.autoRotate = true;
+
+                console.log(window.orbitControls);
             }
         });
     }
