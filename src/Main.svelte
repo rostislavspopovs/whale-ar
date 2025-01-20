@@ -112,7 +112,7 @@ import {
             canvasWidth: 640,
             canvasHeight: 480,
             detectionMode: "mono_and_matrix",
-            maxDetectionRate: 60,
+            maxDetectionRate: 0,
             imageSmoothingEnabled:false,
             lostTimeout: 350,
             positioning: {
@@ -221,7 +221,7 @@ import {
         const loadingScreen = document.getElementById( 'loading-screen' );
         loadingScreen.classList.add( 'fade-out' );
         loadingScreen.classList.add('mouse-passthrough')
-        //arController.parameters.maxDetectionRate = 60;
+        arController.parameters.maxDetectionRate = 60;
     }
 </script>
 <a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" log>
