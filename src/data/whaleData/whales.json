@@ -1,12 +1,15 @@
 {
   "sperm-whale":{
-    "name":"Sperm Whale"
+    "name":"Sperm Whale",
+    "icon": "sperm-whale-icon.svg"
   },
   "blue-whale":{
-    "name":"Blue Whale"
+    "name":"Blue Whale",
+    "icon": "blue-whale-icon.svg"
   },
   "humpback-whale":{
     "name":"Humpback Whale",
-    "audio": "humpback-call.mp3"
+    "audio": "humpback-call.mp3",
+    "icon": "humpback-whale-icon.svg"
   }
 }

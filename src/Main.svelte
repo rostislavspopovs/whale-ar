@@ -6,13 +6,14 @@ import {
     Color,
     Group,
     WebGLRenderer,
-    PerspectiveCamera, Object3D,
+    PerspectiveCamera, Object3D, LoadingManager,
 } from "three";
     import ARScene from "./ARScene.svelte";
     import {InteractionManager} from "three.interactive";
     import {WhaleData} from "./WhaleData.js";
     import App from "./App.svelte";
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+    import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 
 
     var markerFound = false;
@@ -46,8 +47,30 @@ import {
 
     window.onload = run;
 
+    AFRAME.registerComponent("log", {
+        init: function () {
+            this.el.addEventListener("loaded", () => {
+                document.dispatchEvent(new Event("allAssetsLoaded"));
+                console.log(AFRAME.THREE.Cache.files);
+            })
+        }
+    });
+
+    AFRAME.registerComponent("loaded-gltf-model", {
+        schema: {
+            modelId: {type: 'string'}
+        },
+        init: function () {
+            document.addEventListener("allAssetsLoaded", () => {
+                this.el.setAttribute("gltf-model", "#"+this.data.modelId);
+                console.log("Updated gltf-model for "+this.data.modelId);
+            })
+        }
+    });
+
     function run () {
 
+        console.log("Window Loaded");
         async function loadWhaleData(){
             window.whaleXML = await WhaleData.getWhales();
         }
@@ -66,7 +89,8 @@ import {
 
         window.interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
         window.orbitControls = new OrbitControls( camera, renderer.domElement );
-        orbitControls.enabled = true;
+        window.orbitControls.enabled = false;
+
 
         markerDummy = new Group();
         scene.add(markerDummy);
@@ -182,15 +206,20 @@ import {
 
             initialiseAppFunc = function (){
                 setTimeout(function(){appLaunched=true}, 500);
-                appScene.appInit();
-                window.orbitControls.autoRotate = true;
-
-                console.log(window.orbitControls);
+                appScene.appInit(latestScanPatternUrl);
             }
         });
     }
 </script>
-<a-scene inspector xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false">
+<a-scene inspector xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" log>
+
+    <a-assets>
+        <a-asset-item id="earth-model" src="../src/assets/earth.glb"></a-asset-item>
+        <a-asset-item id="sperm-whale-model" src="../src/assets/sperm-whale.glb"></a-asset-item>
+        <a-asset-item id="blue-whale-model" src="../src/assets/blue-whale.glb"></a-asset-item>
+        <a-asset-item id="humpback-whale-model" src="../src/assets/humpback-whale.glb"></a-asset-item>
+    </a-assets>
+
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
     <a-entity light="type: ambient; color: #ffffff; intensity: 5"></a-entity>
     {#if !appLaunched}

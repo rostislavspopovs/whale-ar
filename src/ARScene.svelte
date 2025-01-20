@@ -192,7 +192,7 @@
             </a-box>
             <a-entity id="sperm-whale"
                       visible="false"
-                      gltf-model="../src/assets/sperm-whale.glb"
+                      loaded-gltf-model="modelId: sperm-whale-model"
                       animation-mixer
                       position="0 1 0"
                       scale="0.6 0.6 0.6"
@@ -202,7 +202,7 @@
             <a-entity
                     id="blue-whale"
                     visible="false"
-                    gltf-model="../src/assets/blue-whale.glb"
+                    loaded-gltf-model="modelId: blue-whale-model"
                     animation-mixer
                     position="0 1 0"
                     scale="0.2 0.2 0.2"
@@ -212,7 +212,7 @@
             <a-entity
                     id="humpback-whale"
                     visible="false"
-                    gltf-model="../src/assets/humpback-whale.glb"
+                    loaded-gltf-model="modelId: humpback-whale-model"
                     animation-mixer
                     position="0 0 0"
                     scale="0.2 0.2 0.2"
