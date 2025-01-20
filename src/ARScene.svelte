@@ -76,7 +76,8 @@
             window.interactionManager.add(obj);
             obj.addEventListener('click', () => {
                 if(markerFound && !whaleClicked){
-                    launchApp()
+                    //launchApp()
+                    setTimeout(()=>{whaleAudioClip.play()}, 500);
                 }
             })
         }
@@ -228,8 +229,6 @@
     <div class="notice">
         {#if markerFound}
             <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
-            <h2>Tap on the whale to learn more</h2>
-
         {/if}
     </div>
 {/if}
