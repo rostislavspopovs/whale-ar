@@ -22,6 +22,7 @@
     AFRAME.registerComponent("ar-scene-component", {
         init: function () {
             console.log("arScene init");
+            console.log(arController);
             this.sceneChildren = [];
         },
         tick: function () {
@@ -74,7 +75,7 @@
             console.log(obj);
             window.interactionManager.add(obj);
             obj.addEventListener('click', () => {
-                if(markerFound){
+                if(markerFound && !whaleClicked){
                     launchApp()
                 }
             })

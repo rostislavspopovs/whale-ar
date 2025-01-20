@@ -33,17 +33,19 @@ import {
     renderer.domElement.style.left = '0px'
     document.body.appendChild( renderer.domElement );
 
-    let arScene; //bound through svelte
+    let arReady = $state(false);
+
+    let arScene = $state(); //bound through svelte
     let appScene; //bound through svelte
 
-    let arController;
-    let camera;
-    let scene;
+    let arController = $state();
+    let camera = $state();
+    let scene = $state();
     let markerRoot;
-    let markerDummy;
+    let markerDummy = $state();
 
-    let appLaunched = false;
-    let initialiseAppFunc;
+    let appLaunched = $state(false);
+    let initialiseAppFunc = $state();
 
     window.onload = run;
 
@@ -52,6 +54,10 @@ import {
             this.el.addEventListener("loaded", () => {
                 document.dispatchEvent(new Event("allAssetsLoaded"));
                 console.log(AFRAME.THREE.Cache.files);
+                console.log("Window Loaded");
+                setTimeout(() => {
+                    arReady = true;
+                }, 0)
             })
         }
     });
@@ -68,9 +74,9 @@ import {
         }
     });
 
+
     function run () {
 
-        console.log("Window Loaded");
         async function loadWhaleData(){
             window.whaleXML = await WhaleData.getWhales();
         }
@@ -103,8 +109,8 @@ import {
 
         THREEAR.initialize({source: source,
             patternRatio:0.6,
-            canvasWidth: 640*2,
-            canvasHeight: 480*2,
+            canvasWidth: 640,
+            canvasHeight: 480,
             detectionMode: "mono_and_matrix",
             maxDetectionRate: 60,
             imageSmoothingEnabled:false,
@@ -115,7 +121,7 @@ import {
                 smoothTolerance: 0.002,
                 smoothThreshold: 1
             }}).then((controller) => {
-
+                console.log("AR Initialised");
                 arController = controller;
             var spermMarker = new THREEAR.PatternMarker({
                 patternUrl: '../src/data/patterns/sperm-whale.patt',
@@ -149,7 +155,6 @@ import {
             });
 
             requestAnimationFrame(function animate(nowMsec){
-
                 requestAnimationFrame( animate );
                 arController.update( source.domElement );
                 window.interactionManager.update();
@@ -208,10 +213,18 @@ import {
                 setTimeout(function(){appLaunched=true}, 500);
                 appScene.appInit(latestScanPatternUrl);
             }
+
         });
     }
+
+    function beginScan(){
+        const loadingScreen = document.getElementById( 'loading-screen' );
+        loadingScreen.classList.add( 'fade-out' );
+        loadingScreen.classList.add('mouse-passthrough')
+        //arController.parameters.maxDetectionRate = 60;
+    }
 </script>
-<a-scene inspector xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" log>
+<a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" log>
 
     <a-assets>
         <a-asset-item id="earth-model" src="../src/assets/earth.glb"></a-asset-item>
@@ -229,5 +242,26 @@ import {
     {/if}
 
     <App bind:this={appScene}/>
-
 </a-scene>
+
+<section id="loading-screen">
+    <h1 style="font-size: 30px; margin-top:5vh">Blue Corridors</h1>
+    {#if !arReady}
+        <div id="loader"></div>
+    {:else}
+        <div>
+            <button id="start-button" on:click={beginScan} aria-label="Start Scan">
+                <svg width="150" height="150">
+                    <image xlink:href="../src/assets/scan-icon.svg" width="150" height="150"/>
+                </svg>
+            </button>
+            <h3>Start Scanning</h3>
+        </div>
+    {/if}
+    <div style="margin-bottom:5vh">
+        <svg width="100" height="100">
+            <image xlink:href="../src/assets/volume-up-icon.svg" width="100" height="100"/>
+        </svg>
+        <h3>Turn up audio for best experience</h3>
+    </div>
+</section>
