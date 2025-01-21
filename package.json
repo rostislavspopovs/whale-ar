@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --port 8888",
-    "build": "vite build",
+    "build": "vite build --base=https://wsa-creativecomputing.org/bluecorridors/",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.node.json"
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^5.2.10",
-    "@sveltejs/adapter-static": "^3.0.6",
+    "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tsconfig/svelte": "^5.0.4",
     "svelte": "^5.14.0",

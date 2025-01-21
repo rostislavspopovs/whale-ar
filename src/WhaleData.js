@@ -1,8 +1,9 @@
+
 let loaded = false;
 export class WhaleData{
     static async getWhales()
     {
-        const whales = await fetch("../src/data/whaleData/whales.json")
+        const whales = await fetch("/data/whales.json")
             .then(response => response.json())
             .then(json => {
                 loaded = true;

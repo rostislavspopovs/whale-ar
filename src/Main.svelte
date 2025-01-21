@@ -15,7 +15,6 @@ import {
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
     import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
 
-
     var markerFound = false;
     var markerFoundPrev = false;
     var latestScanPatternUrl = "";
@@ -113,28 +112,28 @@ import {
             canvasHeight: 480,
             detectionMode: "mono_and_matrix",
             maxDetectionRate: 0,
-            imageSmoothingEnabled:false,
+            imageSmoothingEnabled:true,
             lostTimeout: 350,
             positioning: {
                 smooth:true,
-                smoothCount: 3,
-                smoothTolerance: 0.002,
-                smoothThreshold: 1
+                smoothCount: 4,
+                smoothTolerance: 0.009,
+                smoothThreshold: 2
             }}).then((controller) => {
                 console.log("AR Initialised");
                 arController = controller;
             var spermMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/sperm-whale.patt',
+                patternUrl: '/data/patterns/sperm-whale.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.05,
             });
             var blueMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/blue-whale.patt',
+                patternUrl: '/data/patterns/blue-whale.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.05,
             });
             var humpbackMarker = new THREEAR.PatternMarker({
-                patternUrl: '../src/data/patterns/humpback-whale.patt',
+                patternUrl: '/data/patterns/humpback-whale.patt',
                 markerObject: markerDummy,
                 minConfidence: 0.05,
             });
@@ -148,7 +147,8 @@ import {
             arController.addEventListener('markerFound', function(event) {
                 markerFound = true;
                 markerRoot.visible = true;
-                latestScanPatternUrl = event.marker.patternUrl.split('/')[4].slice(0,-5);
+                console.log(event.marker.patternUrl);
+                latestScanPatternUrl = event.marker.patternUrl.split('/')[3].slice(0,-5);
             });
             arController.addEventListener('markerLost', function(event) {
                 markerFound = false;
@@ -227,10 +227,10 @@ import {
 <a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" log>
 
     <a-assets>
-        <a-asset-item id="earth-model" src="../src/assets/earth.glb"></a-asset-item>
-        <a-asset-item id="sperm-whale-model" src="../src/assets/sperm-whale.glb"></a-asset-item>
-        <a-asset-item id="blue-whale-model" src="../src/assets/blue-whale.glb"></a-asset-item>
-        <a-asset-item id="humpback-whale-model" src="../src/assets/humpback-whale.glb"></a-asset-item>
+        <a-asset-item id="earth-model" src="/assets/earth.glb"></a-asset-item>
+        <a-asset-item id="sperm-whale-model" src="/assets/sperm-whale.glb"></a-asset-item>
+        <a-asset-item id="blue-whale-model" src="/assets/blue-whale.glb"></a-asset-item>
+        <a-asset-item id="humpback-whale-model" src="/assets/humpback-whale.glb"></a-asset-item>
     </a-assets>
 
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
@@ -252,7 +252,7 @@ import {
         <div>
             <button id="start-button" on:click={beginScan} aria-label="Start Scan">
                 <svg width="150" height="150">
-                    <image xlink:href="../src/assets/scan-icon.svg" width="150" height="150"/>
+                    <image xlink:href="/assets/scan-icon.svg" width="150" height="150"/>
                 </svg>
             </button>
             <h3>Start Scanning</h3>
@@ -260,7 +260,7 @@ import {
     {/if}
     <div style="margin-bottom:5vh">
         <svg width="100" height="100">
-            <image xlink:href="../src/assets/volume-up-icon.svg" width="100" height="100"/>
+            <image xlink:href="/assets/volume-up-icon.svg" width="100" height="100"/>
         </svg>
         <h3>Turn up audio for best experience</h3>
     </div>

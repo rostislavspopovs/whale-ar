@@ -146,6 +146,14 @@ button{
   }
 }
 
+#a-frame-scene > div.a-modal > div > div.a-dialog-text-container > div, #a-frame-scene > div.a-modal > div > div.a-dialog-buttons-container > button.a-dialog-button {
+
+  color: black !important;
+  text-shadow:0 !important;
+  font-family: Monospace !important;
+
+}
+
 
 
 

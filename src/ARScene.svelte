@@ -92,7 +92,7 @@
             if(whaleId == patternUrl){
                 document.getElementById(whaleId).setAttribute("visible", true);
                 whaleAudioClip = new Howl({
-                    src: ['../src/assets/'+window.whaleXML[whaleId]["audio"]]
+                    src: ['/assets/'+window.whaleXML[whaleId]["audio"]]
                 })
                 setTimeout(()=>{whaleAudioClip.play()}, 500);
             }

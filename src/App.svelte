@@ -167,24 +167,24 @@
         {#if !inWhaleSelection}
             <button class="whale-selector-button" on:click={launchWhaleSelectMenu} aria-label="Enter Whale Selector">
                 <svg width="90" height="90">
-                    <image xlink:href="../src/assets/whale-selector-button.svg" width="90" height="90"/>
+                    <image xlink:href="/assets/whale-selector-button.svg" width="90" height="90"/>
                 </svg>
             </button>
         {:else}
             <div style="display: flex; justify-content: center;">
                 <button class="whale-selector-left-button" on:click={prevWhale} aria-label="Previous Whale">
                     <svg width="70" height="70">
-                        <image xlink:href="../src/assets/chevron-left-button.svg" width="70" height="70"/>
+                        <image xlink:href="/assets/chevron-left-button.svg" width="70" height="70"/>
                     </svg>
                 </button>
                 <button class="globe-button" on:click={exitWhaleSelectMenu} aria-label="Return to Globe">
                     <svg width="90" height="90">
-                        <image xlink:href="../src/assets/globe-button.svg" width="90" height="90"/>
+                        <image xlink:href="/assets/globe-button.svg" width="90" height="90"/>
                     </svg>
                 </button>
                 <button class="whale-selector-right-button" on:click={nextWhale} aria-label="Next Whale">
                     <svg width="70" height="70">
-                        <image xlink:href="../src/assets/chevron-right-button.svg" width="70" height="70"/>
+                        <image xlink:href="/assets/chevron-right-button.svg" width="70" height="70"/>
                     </svg>
                 </button>
             </div>

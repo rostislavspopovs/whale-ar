@@ -18,6 +18,14 @@
     "suppressImplicitAnyIndexErrors": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/data/patterns/*.patt, src/assets/*.png"],
+//  "include": ["src/**/*.ts",
+//    "src/**/*.js",
+//    "src/**/*.svelte",
+//    "src/data/patterns/*.patt",
+//    "src/assets/*.png",
+//    "src/**/*.d.ts",
+//    "src/**/*.js",
+//    "src/**/*.ts",
+//    "src/**/*.svelte"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
