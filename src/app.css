@@ -51,6 +51,15 @@ button{
   transform: translate(50%,-50%);
 }
 
+#top-text{
+  text-align: center;
+  z-index: 100;
+  position: absolute;
+  top: 10vh; right: 50%;
+  width: 60%;
+  transform: translate(50%,-50%);
+}
+
 .mouse-passthrough{
   pointer-events: none !important;
 }

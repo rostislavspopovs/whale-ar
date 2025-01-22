@@ -113,7 +113,7 @@ import {
             detectionMode: "mono_and_matrix",
             maxDetectionRate: 0,
             imageSmoothingEnabled:true,
-            lostTimeout: 350,
+            lostTimeout: 750,
             positioning: {
                 smooth:true,
                 smoothCount: 4,

@@ -76,7 +76,7 @@
             window.interactionManager.add(obj);
             obj.addEventListener('click', () => {
                 if(markerFound && !whaleClicked){
-                    //launchApp()
+                    launchApp()
                     setTimeout(()=>{whaleAudioClip.play()}, 500);
                 }
             })
@@ -171,12 +171,12 @@
 
 
     <a-entity id="launchScene"
-              position="0 3 0"
+              position="0 2 0"
               scale="0 0 0"
               rotation="0 0 0"
-              animation__init3scale="property: scale; to: 1 1 1; dur:500; easing: easeOutBack; startEvents: onMarkerFound; delay: 1000"
+              animation__init3scale="property: scale; to: 0.6 0.6 0.6; dur:500; easing: easeOutBack; startEvents: onMarkerFound; delay: 500"
               animation__lost1scale="property: scale; to: 0 0 0; dur:200; easing: easeInBack; startEvents: onMarkerLost; delay: 0"
-              animation__reinit1scale="property: scale; to: 1 1 1; dur:200; easing: easeOutBack; startEvents: onMarkerFoundAgain; delay: 200"
+              animation__reinit1scale="property: scale; to: 0.6 0.6 0.6; dur:200; easing: easeOutBack; startEvents: onMarkerFoundAgain; delay: 200"
     >
 <!--        <a-entity-->
 <!--                  gltf-model="../src/assets/earth.glb"-->

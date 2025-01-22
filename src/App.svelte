@@ -7,15 +7,18 @@
     let selectedWhaleId = $state();
     let inWhaleSelection = $state(false);
     let whaleSelector;
+    let globe;
+    let currentIndex;
     console.log("App Scene");
     export const appInit = (latestScanPatternUrl) => {
         selectedWhaleId = latestScanPatternUrl;
         console.log(selectedWhaleId);
         appLaunched = true;
         window.orbitControls.enabled = true;
-        let globe = document.querySelector("#globe");
+        globe = document.querySelector("#globe");
         whaleSelector = document.querySelector("#whale-selector");
         globe.setAttribute("visible", true);
+        setupGlobeControls();
         AFRAME.ANIME({
             targets: [globe.object3D.position],
             x: 0,
@@ -30,33 +33,29 @@
             y: 1,
             z: 1,
             easing: 'easeOutQuart',
-            duration: 1500
-        });
-        AFRAME.ANIME({
-            targets: [globe.object3D.rotation],
-            x: 0,
-            y: 1,
-            z: 0,
-            easing: 'easeOutQuart',
             duration: 1500,
-            complete: setupGlobeControls
-        })
+        });
         function setupGlobeControls() {
             console.log(globe.object3D);
             window.orbitControls.target = globe.object3D.position;
-            window.orbitControls.autoRotate = false;
+            window.orbitControls.autoRotate = true;
             window.orbitControls.enablePan = false
             window.orbitControls.minDistance = 2;
             window.orbitControls.maxDistance = 6;
         }
     };
 
-    const whaleIds = ["sperm-whale","blue-whale","humpback-whale"];
-    var currentIndex = whaleIds.indexOf(selectedWhaleId);
+    const whaleIds = ['sperm-whale','blue-whale','humpback-whale'];
     function launchWhaleSelectMenu(){
+        console.log(selectedWhaleId);
+        currentIndex = whaleIds.indexOf(selectedWhaleId);
+        console.log("Whale Selector, current id: "+ currentIndex);
+
+        globe.setAttribute("visible", false);
+        whaleSelector.setAttribute("visible", true);
         globe.object3D.scale.set(0,0,0);
+        whaleSelector.object3D.scale.set(0,0,0);
         inWhaleSelection = true;
-        console.log("Whale Selector");
         showSelectedWhale();
 
         AFRAME.ANIME({
@@ -69,7 +68,10 @@
         });
     }
     function exitWhaleSelectMenu(){
+        globe.setAttribute("visible", true);
+        whaleSelector.setAttribute("visible", false);
         whaleSelector.object3D.scale.set(0,0,0);
+        globe.object3D.scale.set(0,0,0);
         inWhaleSelection = false;
 
         AFRAME.ANIME({
@@ -131,7 +133,8 @@
 
 <a-entity id="whale-selector"
           position="0 0 -6"
-          scale="0 0 0">
+          scale="0 0 0"
+          visible="false">
     <a-entity id="sperm-whale"
               visible="false"
               loaded-gltf-model="modelId: sperm-whale-model"
@@ -163,6 +166,13 @@
 </a-entity>
 
 {#if appLaunched}
+    <div id="top-text">
+        {#if !inWhaleSelection}
+            <h1>Now tracking:<br>{window.whaleXML[selectedWhaleId]["name"]}</h1>
+        {:else}
+            <h1>Select whale:<br>{window.whaleXML[selectedWhaleId]["name"]}</h1>
+        {/if}
+    </div>
     <div class="whale-menu">
         {#if !inWhaleSelection}
             <button class="whale-selector-button" on:click={launchWhaleSelectMenu} aria-label="Enter Whale Selector">
