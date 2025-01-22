@@ -1,3 +1,5 @@
+@font-face { font-family: WWF; src: url('/fonts/WWF.otf'); }
+
 canvas{
   z-index: 10;
 }
@@ -5,6 +7,7 @@ canvas{
 video{
   opacity: 1;
 }
+
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -21,7 +24,7 @@ video{
   background: #647AA3;
   background: linear-gradient(180deg, #647AA3 0%, #334195 100%);
   color: #e3e3e3;
-  text-shadow: black 0px 0px 10px;
+  /*text-shadow: black 0px 0px 10px;*/
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,7 +32,7 @@ video{
 }
 
 .notice{
-  z-index: 100;
+  z-index: 150;
   display: flex;
   justify-content: end;
   flex-direction: column;
@@ -56,8 +59,29 @@ button{
   z-index: 100;
   position: absolute;
   top: 10vh; right: 50%;
-  width: 60%;
+  width: 80%;
   transform: translate(50%,-50%);
+}
+
+.info-button{
+  z-index: 220;
+  position: fixed;
+  top: 0px; right: 0px;
+  margin: 2px;
+}
+
+.info-panel{
+  position: fixed;
+  z-index: 210;
+  right: 0;
+  top: 0;
+  width: fit-content;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding-left: 30px;
+  padding-right: 20px;
+  white-space: wrap;
+  overflow-y: scroll;
 }
 
 .mouse-passthrough{
@@ -66,7 +90,7 @@ button{
 
 #loading-screen {
   position: absolute;
-  z-index: 1000;
+  z-index: 200;
   top: 0;
   left: 0;
   width: 100%;
