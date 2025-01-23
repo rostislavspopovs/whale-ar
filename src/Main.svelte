@@ -95,6 +95,7 @@ import {
         scene.add(camera);
 
         window.interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
+        window.camera = camera;
         window.orbitControls = new OrbitControls( camera, renderer.domElement );
         window.orbitControls.enabled = false;
 
@@ -174,6 +175,7 @@ import {
                 markerFoundPrev = markerFound;
 
                 window.orbitControls.update();
+                console.log(camera.rotation);
             });
 
 

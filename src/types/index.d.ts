@@ -12,5 +12,6 @@ declare global {
         whaleXML: any; // whatever type you want to give. (any,number,float etc)
         interactionManager: InteractionManager;
         orbitControls: OrbitControls;
+        camera: THREE.PerspectiveCamera;
     }
 }

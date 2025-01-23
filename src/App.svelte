@@ -9,6 +9,11 @@
     let whaleSelector;
     let globe;
     let currentIndex;
+
+    let camera;
+    let defaultCameraPos;
+    let defaultCameraRot;
+
     console.log("App Scene");
     export const appInit = (latestScanPatternUrl) => {
         selectedWhaleId = latestScanPatternUrl;
@@ -42,8 +47,21 @@
             window.orbitControls.enablePan = false
             window.orbitControls.minDistance = 2;
             window.orbitControls.maxDistance = 6;
+
+            camera = window.camera;
+            defaultCameraPos = camera.position;
+            defaultCameraRot = camera.rotation;
+            console.log(defaultCameraPos);
+            console.log(defaultCameraRot);
         }
     };
+
+    function resetCamera(){
+        window.orbitControls.enabled = false;
+        camera.position.set(0,0,0);
+        camera.rotation.set(45,0,0);
+        window.orbitControls.enabled = true;
+    }
 
     const whaleIds = ['sperm-whale','blue-whale','humpback-whale'];
     function launchWhaleSelectMenu(){
@@ -51,6 +69,7 @@
         currentIndex = whaleIds.indexOf(selectedWhaleId);
         console.log("Whale Selector, current id: "+ currentIndex);
 
+        resetCamera()
         globe.setAttribute("visible", false);
         whaleSelector.setAttribute("visible", true);
         globe.object3D.scale.set(0,0,0);
@@ -60,14 +79,16 @@
 
         AFRAME.ANIME({
             targets: [whaleSelector.object3D.scale],
-            x: 0.5,
-            y: 0.5,
-            z: 0.5,
+            x: 0.4,
+            y: 0.4,
+            z: 0.4,
             easing: 'easeOutQuint',
             duration: 750
         });
     }
     function exitWhaleSelectMenu(){
+
+        resetCamera()
         globe.setAttribute("visible", true);
         whaleSelector.setAttribute("visible", false);
         whaleSelector.object3D.scale.set(0,0,0);
@@ -84,29 +105,33 @@
         });
     }
     function nextWhale(){
+
+        resetCamera()
         whaleSelector.object3D.scale.set(0,0,0);
         currentIndex = (currentIndex + 1 + whaleIds.length) % whaleIds.length;
         selectedWhaleId = whaleIds[currentIndex];
         showSelectedWhale();
         AFRAME.ANIME({
             targets: [whaleSelector.object3D.scale],
-            x: 0.5,
-            y: 0.5,
-            z: 0.5,
+            x: 0.4,
+            y: 0.4,
+            z: 0.4,
             easing: 'easeOutQuint',
             duration: 500
         });
     }
     function prevWhale(){
+
+        resetCamera()
         whaleSelector.object3D.scale.set(0,0,0);
         currentIndex = (currentIndex - 1 + whaleIds.length) % whaleIds.length;
         selectedWhaleId = whaleIds[currentIndex];
         showSelectedWhale();
         AFRAME.ANIME({
             targets: [whaleSelector.object3D.scale],
-            x: 0.5,
-            y: 0.5,
-            z: 0.5,
+            x: 0.4,
+            y: 0.4,
+            z: 0.4,
             easing: 'easeOutQuint',
             duration: 500
         });
@@ -175,24 +200,24 @@
     </div>
     <div class="whale-menu">
         {#if !inWhaleSelection}
-            <button class="whale-selector-button" on:click={launchWhaleSelectMenu} aria-label="Enter Whale Selector">
+            <button class="whale-selector-button" onclick={launchWhaleSelectMenu} aria-label="Enter Whale Selector">
                 <svg width="90" height="90">
                     <image xlink:href="/assets/whale-selector-button.svg" width="90" height="90"/>
                 </svg>
             </button>
         {:else}
             <div style="display: flex; justify-content: center;">
-                <button class="whale-selector-left-button" on:click={prevWhale} aria-label="Previous Whale">
+                <button class="whale-selector-left-button" onclick={prevWhale} aria-label="Previous Whale">
                     <svg width="70" height="70">
                         <image xlink:href="/assets/chevron-left-button.svg" width="70" height="70"/>
                     </svg>
                 </button>
-                <button class="globe-button" on:click={exitWhaleSelectMenu} aria-label="Return to Globe">
+                <button class="globe-button" onclick={exitWhaleSelectMenu} aria-label="Return to Globe">
                     <svg width="90" height="90">
                         <image xlink:href="/assets/globe-button.svg" width="90" height="90"/>
                     </svg>
                 </button>
-                <button class="whale-selector-right-button" on:click={nextWhale} aria-label="Next Whale">
+                <button class="whale-selector-right-button" onclick={nextWhale} aria-label="Next Whale">
                     <svg width="70" height="70">
                         <image xlink:href="/assets/chevron-right-button.svg" width="70" height="70"/>
                     </svg>

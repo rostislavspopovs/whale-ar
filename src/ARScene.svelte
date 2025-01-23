@@ -231,6 +231,7 @@
             <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
             <h2>Tap on the whale to continue</h2>
         {:else}
+            <div class="scan-line"></div>
             <h2>Point your camera at the stamp on your postcard</h2>
         {/if}
     </div>
