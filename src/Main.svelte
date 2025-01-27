@@ -175,7 +175,6 @@ import {
                 markerFoundPrev = markerFound;
 
                 window.orbitControls.update();
-                console.log(camera.rotation);
             });
 
 

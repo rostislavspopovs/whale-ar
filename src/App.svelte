@@ -1,5 +1,5 @@
 <script>
-    import {Vector2, Vector3} from "three";
+    import {ImageUtils, MeshPhongMaterial, TextureLoader, Vector2, Vector3} from "three";
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
     import {Howl} from "howler";
 
@@ -14,6 +14,8 @@
     let defaultCameraPos;
     let defaultCameraRot;
 
+    let overlayMaterial = new MeshPhongMaterial();
+
     console.log("App Scene");
     export const appInit = (latestScanPatternUrl) => {
         selectedWhaleId = latestScanPatternUrl;
@@ -23,6 +25,10 @@
         globe = document.querySelector("#globe");
         whaleSelector = document.querySelector("#whale-selector");
         globe.setAttribute("visible", true);
+
+        overlayMaterial = globe.object3D.children[0].children[1].material;
+        overlayMaterial.copy(globe.object3D.children[0].children[0].material);
+
         setupGlobeControls();
         AFRAME.ANIME({
             targets: [globe.object3D.position],
@@ -51,9 +57,8 @@
             camera = window.camera;
             defaultCameraPos = camera.position;
             defaultCameraRot = camera.rotation;
-            console.log(defaultCameraPos);
-            console.log(defaultCameraRot);
         }
+        SetGlobeOverlay();
     };
 
     function resetCamera(){
@@ -103,6 +108,8 @@
             easing: 'easeOutQuint',
             duration: 750
         });
+
+        SetGlobeOverlay();
     }
     function nextWhale(){
 
@@ -144,6 +151,12 @@
                 document.getElementById(whaleId).setAttribute("visible", true);
             }
         })
+    }
+    const textureLoader = new TextureLoader();
+    function SetGlobeOverlay(){
+        overlayMaterial.map = textureLoader.load("/assets/blue-whale-paths.png");
+        overlayMaterial.transparent = true;
+        overlayMaterial.needsUpdate = true;
     }
 </script>
 
