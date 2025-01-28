@@ -1,15 +1,57 @@
 {
-  "sperm-whale":{
-    "name":"Sperm Whale",
-    "icon": "sperm-whale-icon.svg"
+  "sperm-whale": {
+    "name": "Sperm Whale",
+    "status": "Vulnerable",
+    "length": "11-20m",
+    "population": "350,000",
+    "icon": "sperm-whale-icon.svg",
+    "satellite": "sperm-whale-satellite.png",
+    "POIs":
+    [
+      {
+        "name": "Gulf of Mexico",
+        "description": "Functions as a year-round hub for breeding and feeding family groups",
+        "x": 0,
+        "y": 1,
+        "z": 0
+      }
+    ]
   },
   "blue-whale":{
     "name":"Blue Whale",
-    "icon": "blue-whale-icon.svg"
+    "status": "Endangered",
+    "length": "24-26m",
+    "population": "<15,000",
+    "icon": "blue-whale-icon.svg",
+    "satellite": "blue-whale-satellite.png",
+    "POIs":
+    [
+      {
+        "name": "Gulf of Mexico",
+        "description": "Functions as a year-round hub for breeding and feeding family groups",
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    ]
   },
   "humpback-whale":{
     "name":"Humpback Whale",
+    "status": "Least Concern",
+    "length": "13-16m",
+    "population": "84,000",
     "audio": "humpback-call.mp3",
-    "icon": "humpback-whale-icon.svg"
+    "icon": "humpback-whale-icon.svg",
+    "satellite": "humpback-whale-satellite.png",
+    "POIs":
+    [
+      {
+        "name": "Gulf of Mexico",
+        "description": "Functions as a year-round hub for breeding and feeding family groups",
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    ]
   }
 }

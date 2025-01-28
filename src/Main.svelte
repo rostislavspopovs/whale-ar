@@ -14,6 +14,11 @@ import {
     import App from "./App.svelte";
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
     import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
+import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer.js";
+import {TransformControls} from 'three/examples/jsm/controls/TransformControls';
+import {useThrelte} from "@threlte/core";
+import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
+
 
     var markerFound = false;
     var markerFoundPrev = false;
@@ -26,7 +31,7 @@ import {
     renderer.setClearColor(new Color('lightgrey'), 0)
     renderer.setPixelRatio( 3 );
     renderer.outputColorSpace = THREE.SRGBColorSpace
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute'
     renderer.domElement.style.top = '0px'
     renderer.domElement.style.left = '0px'
@@ -91,8 +96,18 @@ import {
         camera = new PerspectiveCamera();
         camera.name = "JS Perspective Camera";
         scene.camera = camera;
+        camera.aspect = window.innerWidth / window.innerHeight;
 
         scene.add(camera);
+
+        window.cssRenderer = new CSS2DRenderer();
+        window.cssRenderer.setSize( window.innerWidth, window.innerHeight );
+        window.cssRenderer.domElement.className = "cssRenderer";
+        window.cssRenderer.domElement.style.position = 'absolute';
+        window.cssRenderer.domElement.style.top = '0px';
+        window.cssRenderer.domElement.style.zIndex = 10;
+        window.cssRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(window.cssRenderer.domElement);
 
         window.interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
         window.camera = camera;
@@ -157,11 +172,13 @@ import {
                 markerFound = false;
             });
 
+
             requestAnimationFrame(function animate(nowMsec){
                 requestAnimationFrame( animate );
                 arController.update( source.domElement );
                 window.interactionManager.update();
                 renderer.render( scene, camera );
+                window.cssRenderer.render(scene, window.camera);
                 if(markerFound) {
                     markerRoot.position.lerp(markerDummy.position, 1);
                     markerRoot.quaternion.slerp(markerDummy.quaternion, 1);
@@ -175,6 +192,7 @@ import {
                 markerFoundPrev = markerFound;
 
                 window.orbitControls.update();
+
             });
 
 
@@ -218,6 +236,8 @@ import {
             }
 
         });
+
+
     }
 
     function beginScan(){
@@ -238,6 +258,7 @@ import {
         <a-asset-item id="sperm-whale-model" src="/assets/sperm-whale.glb"></a-asset-item>
         <a-asset-item id="blue-whale-model" src="/assets/blue-whale.glb"></a-asset-item>
         <a-asset-item id="humpback-whale-model" src="/assets/humpback-whale.glb"></a-asset-item>
+        <a-asset-item id="scan-icon" src="/assets/scan-icon.svg"></a-asset-item>
     </a-assets>
 
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
@@ -248,7 +269,7 @@ import {
         </a-entity>
     {/if}
 
-    <App bind:this={appScene}/>
+    <App bind:this={appScene} scene={scene}/>
 </a-scene>
 
 <section id="loading-screen">
@@ -365,6 +386,9 @@ import {
             marine megafauna to move between these critical habitat
             areas, and are essential for their survival.</p>
         <p> Protecting Blue Corridors is a global collaboration on cetaceans and marine connectivity conservation</p>
+
+        <iframe width="100%" height="300px" src="https://www.youtube.com/embed/OEq-589X4Xc?cc_load_policy=1" allowfullscreen="allowfullscreen">
+        </iframe>
 
         <h2 style="font-family: WWF;">COLLABORATORS</h2>
         <div style="width: 100%">

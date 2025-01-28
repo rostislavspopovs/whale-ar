@@ -1,8 +1,23 @@
 <script>
-    import {ImageUtils, MeshPhongMaterial, TextureLoader, Vector2, Vector3} from "three";
+    import {
+        Color,
+        Group,
+        ImageUtils,
+        MeshPhongMaterial,
+        MeshStandardMaterial,
+        TextureLoader,
+        Vector2,
+        Vector3
+    } from "three";
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
     import {Howl} from "howler";
+    import {SVGLoader} from "three/examples/jsm/loaders/SVGLoader.js";
+    import {CSS2DObject, CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer.js";
+    import {element} from "three/src/Three.TSL.js";
+    import {CSS3DObject} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
+
+    let {scene} = $props();
     let appLaunched = $state(false);
     let selectedWhaleId = $state();
     let inWhaleSelection = $state(false);
@@ -14,7 +29,35 @@
     let defaultCameraPos;
     let defaultCameraRot;
 
-    let overlayMaterial = new MeshPhongMaterial();
+    let globeMaterial1 = new MeshStandardMaterial();
+    let globeMaterial2 = new MeshStandardMaterial();
+    let globeMaterial3 = new MeshStandardMaterial();
+
+    let poiLabels;
+
+    let gpsVisible = $state(true);
+    let shipVisible = $state(false);
+
+    AFRAME.registerComponent("click-test", {
+        init: function () {
+            var obj = this.el.object3D;
+            window.interactionManager.add(obj);
+            var testBox = document.querySelector("#test-box").object3D;
+            obj.addEventListener('click', (event) => {
+
+                    const raycaster = new THREE.Raycaster();
+                    raycaster.setFromCamera( event.coords, camera );
+                    console.log("tap:" + event.coords.x + " " + event.coords.y);
+                    const intersects = raycaster.intersectObjects( scene.children );
+                    for ( let i = 0; i < intersects.length; i ++ ) {
+                        console.log(intersects[ i ].point);
+                        poiLabel.position.copy(intersects[ i ].point);
+                        testBox.position.copy(intersects[ i ].point);
+                    }
+
+            })
+        }
+    });
 
     console.log("App Scene");
     export const appInit = (latestScanPatternUrl) => {
@@ -26,8 +69,24 @@
         whaleSelector = document.querySelector("#whale-selector");
         globe.setAttribute("visible", true);
 
-        overlayMaterial = globe.object3D.children[0].children[1].material;
-        overlayMaterial.copy(globe.object3D.children[0].children[0].material);
+        globeMaterial1 = globe.object3D.children[0].children[0].material;
+        globeMaterial2 = globe.object3D.children[0].children[1].material;
+        globeMaterial3 = globe.object3D.children[0].children[2].material;
+        globe.object3D.children[0].children[2].renderOrder = 1;
+        //overlayMaterial.copy(globe.object3D.children[0].children[0].material);
+
+        globeMaterial2.map = textureLoader.load("/assets/planet-overlays/shipping-density.png");
+        globeMaterial2.color = new Color().setHex(0x0006bd);
+        globeMaterial2.alphaTest = 0.0;
+        globeMaterial2.blending = THREE.NormalBlending;
+        globeMaterial2.transparent = true;
+        globeMaterial2.opacity = 0.7;
+        globeMaterial2.depthFunc = THREE.AlwaysDepth;
+        globeMaterial2.needsUpdate = true;
+        globeMaterial2.visible = false;
+
+        poiLabels = new Group();
+        scene.add(poiLabels)
 
         setupGlobeControls();
         AFRAME.ANIME({
@@ -49,7 +108,8 @@
         function setupGlobeControls() {
             console.log(globe.object3D);
             window.orbitControls.target = globe.object3D.position;
-            window.orbitControls.autoRotate = true;
+            //window.orbitControls.autoRotate = true;
+            window.orbitControls.rotateSpeed = 0.5;
             window.orbitControls.enablePan = false
             window.orbitControls.minDistance = 2;
             window.orbitControls.maxDistance = 6;
@@ -59,12 +119,12 @@
             defaultCameraRot = camera.rotation;
         }
         SetGlobeOverlay();
+        //setupPOIs();
     };
 
     function resetCamera(){
         window.orbitControls.enabled = false;
         camera.position.set(0,0,0);
-        camera.rotation.set(45,0,0);
         window.orbitControls.enabled = true;
     }
 
@@ -90,6 +150,8 @@
             easing: 'easeOutQuint',
             duration: 750
         });
+
+        window.interactionManager.add(globe.object3D);
     }
     function exitWhaleSelectMenu(){
 
@@ -110,6 +172,7 @@
         });
 
         SetGlobeOverlay();
+        //setupPOIs();
     }
     function nextWhale(){
 
@@ -152,11 +215,56 @@
             }
         })
     }
+
+    function toggleShipOverlay(){
+        globeMaterial2.visible = !globeMaterial2.visible;
+        shipVisible = !shipVisible;
+    }
+    function toggleGPSOverlay(){
+        globeMaterial3.visible = !globeMaterial3.visible;
+        gpsVisible = !gpsVisible;
+    }
+
     const textureLoader = new TextureLoader();
     function SetGlobeOverlay(){
-        overlayMaterial.map = textureLoader.load("/assets/blue-whale-paths.png");
-        overlayMaterial.transparent = true;
-        overlayMaterial.needsUpdate = true;
+
+        globeMaterial3.map = textureLoader.load("/assets/planet-overlays/"+window.whaleXML[selectedWhaleId]["satellite"]);
+        globeMaterial3.color = new Color(1,1,1);
+        globeMaterial3.alphaTest = 0.0;
+        globeMaterial3.blending = THREE.AdditiveBlending;
+        globeMaterial3.transparent = true;
+        globeMaterial3.opacity = 1;
+        globeMaterial3.needsUpdate = true;
+        console.log(globe.object3D);
+    }
+
+    var poiLabel;
+    function setupPOIs(){
+
+        var POIs = window.whaleXML[selectedWhaleId]["POIs"];
+
+        for (var i = 0; i < POIs.length; i++){
+
+            var poi = POIs[i];
+
+            var poiDiv = document.createElement( 'div' );
+            poiDiv.className = 'poi';
+            //poiDiv.style.zIndex = 100;
+            poiDiv.textContent = poi["name"];
+
+
+            poiLabel = new CSS2DObject(poiDiv);
+            //poiLabel.position.set( poi["x"], poi["y"], poi["z"] );
+            poiLabel.center.x = 0.5;
+            poiLabel.center.y = 0.5;
+            poiLabel.position.set(0,0,0);
+            poiLabel.layers.set( 0 );
+
+            scene.add(poiLabel)
+
+        }
+
+
     }
 </script>
 
@@ -204,13 +312,36 @@
 </a-entity>
 
 {#if appLaunched}
-    <div id="top-text">
-        {#if !inWhaleSelection}
-            <h1>Now tracking:<br>{window.whaleXML[selectedWhaleId]["name"]}</h1>
-        {:else}
-            <h1>Select whale:<br>{window.whaleXML[selectedWhaleId]["name"]}</h1>
-        {/if}
-    </div>
+    {#if !inWhaleSelection}
+        <div class="map-options">
+            <button class="gps-toggle-button" onclick={toggleGPSOverlay} aria-label="Toggle GPS Tracking Overlay">
+                {#if gpsVisible}
+                    <svg width="40" height="40">
+                        <image xlink:href="/assets/gps-button-1.svg" width="40" height="40"/>
+                    </svg>
+                {:else}
+                    <svg width="40" height="40">
+                        <image xlink:href="/assets/gps-button-2.svg" width="40" height="40"/>
+                    </svg>
+                {/if}
+            </button>
+            <button class="ship-toggle-button" onclick={toggleShipOverlay} aria-label="Toggle Ship Density Overlay">
+                {#if shipVisible}
+                    <svg width="40" height="40">
+                        <image xlink:href="/assets/ship-button-1.svg" width="40" height="40"/>
+                    </svg>
+                {:else}
+                    <svg width="40" height="40">
+                        <image xlink:href="/assets/ship-button-2.svg" width="40" height="40"/>
+                    </svg>
+                {/if}
+            </button>
+        </div>
+
+        <div id="top-text">
+                <h1>Selected whale:<br>{window.whaleXML[selectedWhaleId]["name"]}</h1>
+        </div>
+    {/if}
     <div class="whale-menu">
         {#if !inWhaleSelection}
             <button class="whale-selector-button" onclick={launchWhaleSelectMenu} aria-label="Enter Whale Selector">
@@ -238,4 +369,14 @@
             </div>
         {/if}
     </div>
+    {#if inWhaleSelection}
+        <div class="whale-panel">
+            <h1><b>Selected whale:</b> {window.whaleXML[selectedWhaleId]["name"]}</h1>
+            <h2>
+                <b>IUCN Status:</b> {window.whaleXML[selectedWhaleId]["status"]}<br>
+                <b>Length:</b> {window.whaleXML[selectedWhaleId]["length"]}<br>
+                <b>Population:</b> {window.whaleXML[selectedWhaleId]["population"]}
+            </h2>
+        </div>
+    {/if}
 {/if}
