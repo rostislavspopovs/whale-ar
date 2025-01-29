@@ -258,7 +258,8 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         <a-asset-item id="sperm-whale-model" src="/assets/sperm-whale.glb"></a-asset-item>
         <a-asset-item id="blue-whale-model" src="/assets/blue-whale.glb"></a-asset-item>
         <a-asset-item id="humpback-whale-model" src="/assets/humpback-whale.glb"></a-asset-item>
-        <a-asset-item id="scan-icon" src="/assets/scan-icon.svg"></a-asset-item>
+        <a-asset-item id="boat-models" src="/assets/boats.glb"></a-asset-item>
+        <a-asset-item id="sperm-whales" src="/assets/sperm-whales.glb"></a-asset-item>
     </a-assets>
 
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
@@ -397,7 +398,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
         <h2 style="font-family: WWF;">CREDITS</h2>
         <p> "Blue Corridors" Application <p>
-        <p> Developed by <a href="https://rosspopovs.com">Ross Popovs</a> in collaboration with
+        <p> Developed by <a href="https://www.linkedin.com/in/rosspopovs/">Ross Popovs</a> in collaboration with
             <a href="https://www.linkedin.com/in/julianstadon/">Dr Julian Stadon</a> and the
             <a href="https://www.southampton.ac.uk/research/institutes-centres/marine-maritime-institute">Southampton Marine and Maritime Institute</a>
         </p>

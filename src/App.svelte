@@ -69,10 +69,11 @@
         whaleSelector = document.querySelector("#whale-selector");
         globe.setAttribute("visible", true);
 
-        globeMaterial1 = globe.object3D.children[0].children[0].material;
-        globeMaterial2 = globe.object3D.children[0].children[1].material;
-        globeMaterial3 = globe.object3D.children[0].children[2].material;
-        globe.object3D.children[0].children[2].renderOrder = 1;
+        globeMaterial1 = globe.object3D.children[2].children[0].material;
+        globeMaterial2 = globe.object3D.children[2].children[1].material;
+        globeMaterial3 = globe.object3D.children[2].children[2].material;
+        globe.object3D.children[2].children[2].renderOrder = 1;
+        globe.object3D.children[2].children[1].renderOrder = 2;
         //overlayMaterial.copy(globe.object3D.children[0].children[0].material);
 
         globeMaterial2.map = textureLoader.load("/assets/planet-overlays/shipping-density.png");
@@ -229,9 +230,7 @@
     function SetGlobeOverlay(){
 
         globeMaterial3.map = textureLoader.load("/assets/planet-overlays/"+window.whaleXML[selectedWhaleId]["satellite"]);
-        globeMaterial3.color = new Color(1,1,1);
         globeMaterial3.alphaTest = 0.0;
-        globeMaterial3.blending = THREE.AdditiveBlending;
         globeMaterial3.transparent = true;
         globeMaterial3.opacity = 1;
         globeMaterial3.needsUpdate = true;
@@ -275,6 +274,18 @@
         scale="0 0 0"
         rotation="0 0 0"
         visible="false">
+    <a-entity
+            id="anim-boats"
+            scale="1 1 1"
+            loaded-gltf-model="modelId: boat-models"
+            animation-mixer="clip: *">
+    </a-entity>
+    <a-entity
+            id="anim-sperm-whales"
+            scale="1 1 1"
+            loaded-gltf-model="modelId: sperm-whales"
+            animation-mixer="clip: *">
+    </a-entity>
 </a-entity>
 
 <a-entity id="whale-selector"
@@ -336,6 +347,23 @@
                     </svg>
                 {/if}
             </button>
+            {#if gpsVisible}
+                <div style="border: 1px solid white">
+                    <svg width="100" height="40">
+                        <image xlink:href="/assets/gps-key.svg" width="100" height="40"/>
+                    </svg>
+                    <svg width="100" height="40">
+                        <image xlink:href="/assets/corridor-key.svg" width="100" height="40"/>
+                    </svg>
+                </div>
+            {/if}
+            {#if shipVisible}
+                <div style="border: 1px solid white">
+                    <svg width="100" height="40">
+                        <image xlink:href="/assets/ship-key.svg" width="100" height="40"/>
+                    </svg>
+                </div>
+            {/if}
         </div>
 
         <div id="top-text">
@@ -373,7 +401,7 @@
         <div class="whale-panel">
             <h1><b>Selected whale:</b> {window.whaleXML[selectedWhaleId]["name"]}</h1>
             <h2>
-                <b>IUCN Status:</b> {window.whaleXML[selectedWhaleId]["status"]}<br>
+                {window.whaleXML[selectedWhaleId]["status"]}<br>
                 <b>Length:</b> {window.whaleXML[selectedWhaleId]["length"]}<br>
                 <b>Population:</b> {window.whaleXML[selectedWhaleId]["population"]}
             </h2>

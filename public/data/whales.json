@@ -1,7 +1,7 @@
 {
   "sperm-whale": {
     "name": "Sperm Whale",
-    "status": "Vulnerable",
+    "status": "Vulnerable to extinction",
     "length": "11-20m",
     "population": "350,000",
     "icon": "sperm-whale-icon.svg",
@@ -19,7 +19,7 @@
   },
   "blue-whale":{
     "name":"Blue Whale",
-    "status": "Endangered",
+    "status": "High risk of extinction",
     "length": "24-26m",
     "population": "<15,000",
     "icon": "blue-whale-icon.svg",
@@ -37,7 +37,7 @@
   },
   "humpback-whale":{
     "name":"Humpback Whale",
-    "status": "Least Concern",
+    "status": "Widespread",
     "length": "13-16m",
     "population": "84,000",
     "audio": "humpback-call.mp3",
