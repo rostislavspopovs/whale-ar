@@ -22,7 +22,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
     var markerFound = false;
     var markerFoundPrev = false;
-    var latestScanPatternUrl = "";
+    var latestScanPatternUrl = "blue-whale";
 
     var renderer = new WebGLRenderer({
         antialias: true,
@@ -245,6 +245,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         loadingScreen.classList.add( 'fade-out' );
         loadingScreen.classList.add('mouse-passthrough')
         arController.parameters.maxDetectionRate = 60;
+        arScene.startAR();
     }
 
     function toggleInfoPanel(){
@@ -258,8 +259,9 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         <a-asset-item id="sperm-whale-model" src="/assets/sperm-whale.glb"></a-asset-item>
         <a-asset-item id="blue-whale-model" src="/assets/blue-whale.glb"></a-asset-item>
         <a-asset-item id="humpback-whale-model" src="/assets/humpback-whale.glb"></a-asset-item>
-        <a-asset-item id="boat-models" src="/assets/boats.glb"></a-asset-item>
         <a-asset-item id="sperm-whales" src="/assets/sperm-whales.glb"></a-asset-item>
+        <a-asset-item id="blue-whales" src="/assets/blue-whales.glb"></a-asset-item>
+        <a-asset-item id="humpback-whales" src="/assets/humpback-whales.glb"></a-asset-item>
     </a-assets>
 
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
@@ -355,27 +357,17 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
             <tr>
                 <td>
                     <svg height="100" width="100" style="transform: scale(50%)">
-                        <image xlink:href="/assets/tts-button.svg" height="100" width="100"/>
+                        <image xlink:href="/assets/tts-icon-2.svg" height="100" width="100"/>
                     </svg>
                 </td>
                 <td>
                     <p>Learn more about your selected whale via voiceover.</p>
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <svg height="100" width="100" style="transform: scale(50%)">
-                        <image xlink:href="/assets/track-button.svg" height="100" width="100"/>
-                    </svg>
-                </td>
-                <td>
-                    <p>Track your whale as it follows its migration path.</p>
-                </td>
-            </tr>
             </thead>
         </table>
 
-        <a href="https://wwfwhales.org/protecting-blue-corridors" style="display: flex; align-items: center">
+        <a target="_blank" href="https://wwfwhales.org/protecting-blue-corridors" style="display: flex; align-items: center">
             <h1 style="font-family: WWF;">PROTECTING BLUE CORRIDORS</h1>
             <svg width="40" height="30">
                 <image xlink:href="/assets/link-icon.svg" width="40" height="30"/>
@@ -399,9 +391,10 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         <h2 style="font-family: WWF;">CREDITS</h2>
         <p> "Blue Corridors" Application <p>
         <p> Developed by <a href="https://www.linkedin.com/in/rosspopovs/">Ross Popovs</a> in collaboration with
-            <a href="https://www.linkedin.com/in/julianstadon/">Dr Julian Stadon</a> and the
-            <a href="https://www.southampton.ac.uk/research/institutes-centres/marine-maritime-institute">Southampton Marine and Maritime Institute</a>
+            <a target="_blank" href="https://www.linkedin.com/in/julianstadon/">Dr Julian Stadon</a> and the
+            <a target="_blank" href="https://www.southampton.ac.uk/research/institutes-centres/marine-maritime-institute">Southampton Marine and Maritime Institute</a>
         </p>
+        <p> All map data is sourced from the <a target="_blank" href="https://wwfwhales.org/resources/protecting-blue-corridors-report">Protecting Blue Corridors Report</a>. </p>
         <small>
             <p>Humpback Whale Model: "Whale" (https://skfb.ly/6GxJT) by Dirk.z; Sperm Whale Model: "Sperm Whale" (https://skfb.ly/oFq8D) by Bohdan Lvov; Blue Whale Model: "Blue whale" (https://skfb.ly/67nCt) by misaooo
                 are licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/)</p>

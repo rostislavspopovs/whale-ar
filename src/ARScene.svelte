@@ -17,6 +17,8 @@
 
     let whaleClicked = $state(false);
 
+    let helpPopup = $state(false);
+
     console.log("ARScene Script");
 
     AFRAME.registerComponent("ar-scene-component", {
@@ -77,7 +79,7 @@
             obj.addEventListener('click', () => {
                 if(markerFound && !whaleClicked){
                     launchApp()
-                    setTimeout(()=>{whaleAudioClip.play()}, 500);
+                    // setTimeout(()=>{whaleAudioClip.play()}, 500);
                 }
             })
         }
@@ -91,16 +93,27 @@
             document.getElementById(whaleId).setAttribute("visible", false);
             if(whaleId == patternUrl){
                 document.getElementById(whaleId).setAttribute("visible", true);
-                whaleAudioClip = new Howl({
-                    src: ['/assets/'+window.whaleXML[whaleId]["audio"]]
-                })
-                setTimeout(()=>{whaleAudioClip.play()}, 500);
+                // whaleAudioClip = new Howl({
+                //     src: ['/assets/'+window.whaleXML[whaleId]["audio"]]
+                // })
+                // setTimeout(()=>{whaleAudioClip.play()}, 500);
             }
         })
     };
     export const onMarkerLost = () => {
         markerFound = false;
     };
+
+    export const startAR = () => {
+        setTimeout(() => {
+            helpPopup = true;
+        }, 15000);
+    };
+
+    function closePopup(){
+        helpPopup = false;
+        startAR();
+    }
 
     function launchApp(){
         whaleClicked = true;
@@ -156,6 +169,8 @@
         },1000);
         setTimeout(onArFinish, 2500);
     }
+
+
 </script>
 
 <a-entity ar-scene-component id="ar-scene">
@@ -166,7 +181,7 @@
            material="transparent: true, opacity: 0"
            animation__init1opacity="property: ground-box.gbOpacity; to: 1.0; dur:400; easing: easeInCubic; startEvents: onMarkerFound; delay: 0"
            animation__init1scale="property: scale; from: 3 0.1 3; to: 1 0.1 1; dur:400; easing: easeOutCubic; startEvents: onMarkerFound; delay: 0"
-           animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:1000; easing: easeInCubic; startEvents: onMarkerFound; delay: 1000"
+           animation__init3opacity="property: ground-box.gbOpacity; from: 1.0; to: 0.0; dur:500; easing: easeInCubic; startEvents: onMarkerFound; delay: 500"
     ></a-box>
 
 
@@ -226,15 +241,37 @@
 </a-entity>
 
 {#if !whaleClicked}
-    <div class="notice">
-        {#if markerFound}
-            <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
-            <h2>Tap on the whale to continue</h2>
-        {:else}
-            <div class="scan-line"></div>
-            <h2>Point your camera at the stamp on your postcard</h2>
-        {/if}
-    </div>
+    {#if !helpPopup}
+        <div class="notice">
+            {#if markerFound}
+                <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
+                <h2>Tap on the whale to continue</h2>
+            {:else}
+                <div class="scan-line"></div>
+                <h2>Point your camera at the stamp on your postcard</h2>
+            {/if}
+        </div>
+    {/if}
+    {#if helpPopup && !markerFound}
+        <div class="popup">
+            <button aria-label="Close panel" onclick={closePopup} style="position: absolute; top: 0px; right: 0px">
+                <svg width="30" height="30">
+                    <image xlink:href="/assets/close-icon.svg" width="30" height="30"/>
+                </svg>
+            </button>
+            <div style="display:flex">
+                <div>
+                    <h2>Unable to detect a post card stamp.</h2>
+                    <h2>Tap on the globe to skip and go straight to the app!</h2>
+                </div>
+                <button class="globe-button" onclick={launchApp} aria-label="Launch App">
+                    <svg width="100" height="100">
+                        <image xlink:href="/assets/globe-button.svg" width="100" height="100"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    {/if}
 {/if}
 
 

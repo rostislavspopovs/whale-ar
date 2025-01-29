@@ -50,7 +50,7 @@ button{
 .whale-menu{
   z-index: 100;
   position: absolute;
-  top: 78vh; right: 50%;
+  top: 75vh; right: 50%;
   transform: translate(50%,-50%);
 }
 
@@ -64,19 +64,64 @@ button{
   transform: translate(50%,0);
 }
 
+.popup{
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 150;
+  width: 80%;
+  height: fit-content;
+  bottom: 50%; right: 50%;
+  overflow-y: scroll;
+  transform: translate(50%,50%);
+  padding-left: 30px;
+  padding-right: 20px;
+  white-space: wrap;
+}
+
+.tts-caption{
+  position: fixed;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: fit-content;
+  height: fit-content;
+  transform: translate(50%,50%);
+  bottom: 28%; right: 50%;
+  padding-left: 5px;
+  padding-right: 5px;
+  width: 80%;
+  font-family: Monospace !important;
+}
+
+.tts-caption > p{
+  width: fit-content;
+  margin: 5px;
+}
+
 .map-options{
   display: flex;
   flex-direction: row;
-
   position: fixed;
   bottom: 5px;
   left: 0px;
   z-index: 100;
 }
 
-.map-options div {
-  padding: -3px;
+
+.map-key{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: fixed;
+  bottom: 5px;
+  right: 0px;
+  z-index: 100;
 }
+
+.map-key > *{
+  width: fit-content;
+}
+
+
 
 #top-text{
   text-align: center;

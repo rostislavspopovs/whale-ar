@@ -38,6 +38,13 @@
     let gpsVisible = $state(true);
     let shipVisible = $state(false);
 
+    let shippingPopup = $state(false);
+    let shippingPopupShown = $state(false);
+
+    let ttsEnabled = $state(false);
+    let ttsInProgress = $state(false);
+    let ttsText;
+
     AFRAME.registerComponent("click-test", {
         init: function () {
             var obj = this.el.object3D;
@@ -69,11 +76,11 @@
         whaleSelector = document.querySelector("#whale-selector");
         globe.setAttribute("visible", true);
 
-        globeMaterial1 = globe.object3D.children[2].children[0].material;
-        globeMaterial2 = globe.object3D.children[2].children[1].material;
-        globeMaterial3 = globe.object3D.children[2].children[2].material;
-        globe.object3D.children[2].children[2].renderOrder = 1;
-        globe.object3D.children[2].children[1].renderOrder = 2;
+        globeMaterial1 = globe.object3D.children[3].children[0].material;
+        globeMaterial2 = globe.object3D.children[3].children[1].material;
+        globeMaterial3 = globe.object3D.children[3].children[2].material;
+        globe.object3D.children[3].children[2].renderOrder = 1;
+        globe.object3D.children[3].children[1].renderOrder = 2;
         //overlayMaterial.copy(globe.object3D.children[0].children[0].material);
 
         globeMaterial2.map = textureLoader.load("/assets/planet-overlays/shipping-density.png");
@@ -120,6 +127,7 @@
             defaultCameraRot = camera.rotation;
         }
         SetGlobeOverlay();
+        showSelectedWhale();
         //setupPOIs();
     };
 
@@ -173,7 +181,6 @@
         });
 
         SetGlobeOverlay();
-        //setupPOIs();
     }
     function nextWhale(){
 
@@ -190,6 +197,9 @@
             easing: 'easeOutQuint',
             duration: 500
         });
+        if(ttsEnabled) {
+            runTTS(selectedWhaleId);
+        }
     }
     function prevWhale(){
 
@@ -206,13 +216,18 @@
             easing: 'easeOutQuint',
             duration: 500
         });
+        if(ttsEnabled) {
+            runTTS(selectedWhaleId);
+        }
     }
 
     function showSelectedWhale(){
         whaleIds.forEach((whaleId) => {
             document.getElementById(whaleId).setAttribute("visible", false);
+            document.getElementById(whaleId+"-globe").setAttribute("visible", false);
             if(whaleId == selectedWhaleId){
                 document.getElementById(whaleId).setAttribute("visible", true);
+                document.getElementById(whaleId+"-globe").setAttribute("visible", true);
             }
         })
     }
@@ -220,6 +235,10 @@
     function toggleShipOverlay(){
         globeMaterial2.visible = !globeMaterial2.visible;
         shipVisible = !shipVisible;
+        if(!shippingPopupShown){
+            shippingPopupShown = true;
+            runTTS("ships");
+        }
     }
     function toggleGPSOverlay(){
         globeMaterial3.visible = !globeMaterial3.visible;
@@ -232,38 +251,43 @@
         globeMaterial3.map = textureLoader.load("/assets/planet-overlays/"+window.whaleXML[selectedWhaleId]["satellite"]);
         globeMaterial3.alphaTest = 0.0;
         globeMaterial3.transparent = true;
-        globeMaterial3.opacity = 1;
+        globeMaterial3.opacity = 0.5;
         globeMaterial3.needsUpdate = true;
-        console.log(globe.object3D);
     }
 
-    var poiLabel;
-    function setupPOIs(){
+    function closePopup(){
+        shippingPopup = false;
+    }
 
-        var POIs = window.whaleXML[selectedWhaleId]["POIs"];
-
-        for (var i = 0; i < POIs.length; i++){
-
-            var poi = POIs[i];
-
-            var poiDiv = document.createElement( 'div' );
-            poiDiv.className = 'poi';
-            //poiDiv.style.zIndex = 100;
-            poiDiv.textContent = poi["name"];
-
-
-            poiLabel = new CSS2DObject(poiDiv);
-            //poiLabel.position.set( poi["x"], poi["y"], poi["z"] );
-            poiLabel.center.x = 0.5;
-            poiLabel.center.y = 0.5;
-            poiLabel.position.set(0,0,0);
-            poiLabel.layers.set( 0 );
-
-            scene.add(poiLabel)
-
+    function toggleTTS(){
+        ttsEnabled = !ttsEnabled;
+        if(ttsEnabled && !ttsInProgress) {
+            runTTS(selectedWhaleId);
         }
+        else if (!ttsEnabled){
+            window.speechSynthesis.cancel();
+            ttsInProgress = false;
+        }
+    }
+    function runTTS(id){
+        window.speechSynthesis.cancel();
+        ttsInProgress = true;
+        var lines = window.whaleXML[id]["tts"];
+        for (var i = 0; i < lines.length; i++) {
+            var msg = new SpeechSynthesisUtterance();
+            msg.text = lines[i];
+            msg.onstart = (event) => {
+                ttsText.innerHTML = event.utterance.text;
+            };
 
+            if (i === lines.length - 1) {
+                msg.onend = (event) => {
+                    ttsInProgress = false;
+                };
+            }
 
+            window.speechSynthesis.speak(msg);
+        }
     }
 </script>
 
@@ -275,16 +299,25 @@
         rotation="0 0 0"
         visible="false">
     <a-entity
-            id="anim-boats"
-            scale="1 1 1"
-            loaded-gltf-model="modelId: boat-models"
-            animation-mixer="clip: *">
-    </a-entity>
-    <a-entity
-            id="anim-sperm-whales"
+            id="sperm-whale-globe"
             scale="1 1 1"
             loaded-gltf-model="modelId: sperm-whales"
-            animation-mixer="clip: *">
+            animation-mixer="clip: *"
+            visible="false">
+    </a-entity>
+    <a-entity
+            id="blue-whale-globe"
+            scale="1 1 1"
+            loaded-gltf-model="modelId: blue-whales"
+            animation-mixer="clip: *"
+            visible="false">
+    </a-entity>
+    <a-entity
+            id="humpback-whale-globe"
+            scale="1 1 1"
+            loaded-gltf-model="modelId: humpback-whales"
+            animation-mixer="clip: *"
+            visible="false">
     </a-entity>
 </a-entity>
 
@@ -323,30 +356,52 @@
 </a-entity>
 
 {#if appLaunched}
+    <div class="map-options">
+        <button class="tts-button" onclick={toggleTTS} aria-label="Text to speech information about whale">
+            {#if !ttsEnabled}
+                <svg width="40" height="40">
+                    <image xlink:href="/assets/tts-icon-1.svg" width="40" height="40"/>
+                </svg>
+            {:else}
+                <svg width="40" height="40">
+                    <image xlink:href="/assets/tts-icon-2.svg" width="40" height="40"/>
+                </svg>
+            {/if}
+        </button>
+        {#if !inWhaleSelection}
+        <button class="gps-toggle-button" onclick={toggleGPSOverlay} aria-label="Toggle GPS Tracking Overlay">
+            {#if gpsVisible}
+                <svg width="40" height="40">
+                    <image xlink:href="/assets/gps-button-1.svg" width="40" height="40"/>
+                </svg>
+            {:else}
+                <svg width="40" height="40">
+                    <image xlink:href="/assets/gps-button-2.svg" width="40" height="40"/>
+                </svg>
+            {/if}
+        </button>
+        <button class="ship-toggle-button" onclick={toggleShipOverlay} aria-label="Toggle Ship Density Overlay">
+            {#if shipVisible}
+                <svg width="40" height="40">
+                    <image xlink:href="/assets/ship-button-1.svg" width="40" height="40"/>
+                </svg>
+            {:else}
+                <svg width="40" height="40">
+                    <image xlink:href="/assets/ship-button-2.svg" width="40" height="40"/>
+                </svg>
+            {/if}
+        </button>
+        {/if}
+    </div>
     {#if !inWhaleSelection}
-        <div class="map-options">
-            <button class="gps-toggle-button" onclick={toggleGPSOverlay} aria-label="Toggle GPS Tracking Overlay">
-                {#if gpsVisible}
-                    <svg width="40" height="40">
-                        <image xlink:href="/assets/gps-button-1.svg" width="40" height="40"/>
+        <div class="map-key">
+            {#if shipVisible}
+                <div style="border: 1px solid white">
+                    <svg width="100" height="40">
+                        <image xlink:href="/assets/ship-key.svg" width="100" height="40"/>
                     </svg>
-                {:else}
-                    <svg width="40" height="40">
-                        <image xlink:href="/assets/gps-button-2.svg" width="40" height="40"/>
-                    </svg>
-                {/if}
-            </button>
-            <button class="ship-toggle-button" onclick={toggleShipOverlay} aria-label="Toggle Ship Density Overlay">
-                {#if shipVisible}
-                    <svg width="40" height="40">
-                        <image xlink:href="/assets/ship-button-1.svg" width="40" height="40"/>
-                    </svg>
-                {:else}
-                    <svg width="40" height="40">
-                        <image xlink:href="/assets/ship-button-2.svg" width="40" height="40"/>
-                    </svg>
-                {/if}
-            </button>
+                </div>
+            {/if}
             {#if gpsVisible}
                 <div style="border: 1px solid white">
                     <svg width="100" height="40">
@@ -354,13 +409,6 @@
                     </svg>
                     <svg width="100" height="40">
                         <image xlink:href="/assets/corridor-key.svg" width="100" height="40"/>
-                    </svg>
-                </div>
-            {/if}
-            {#if shipVisible}
-                <div style="border: 1px solid white">
-                    <svg width="100" height="40">
-                        <image xlink:href="/assets/ship-key.svg" width="100" height="40"/>
                     </svg>
                 </div>
             {/if}
@@ -405,6 +453,12 @@
                 <b>Length:</b> {window.whaleXML[selectedWhaleId]["length"]}<br>
                 <b>Population:</b> {window.whaleXML[selectedWhaleId]["population"]}
             </h2>
+        </div>
+    {/if}
+
+    {#if ttsInProgress}
+        <div class="tts-caption">
+            <p bind:this={ttsText}></p>
         </div>
     {/if}
 {/if}

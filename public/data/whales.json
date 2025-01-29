@@ -6,15 +6,13 @@
     "population": "350,000",
     "icon": "sperm-whale-icon.svg",
     "satellite": "sperm-whale-satellite.png",
-    "POIs":
+    "tts":
     [
-      {
-        "name": "Gulf of Mexico",
-        "description": "Functions as a year-round hub for breeding and feeding family groups",
-        "x": 0,
-        "y": 1,
-        "z": 0
-      }
+      "Sperm whales wander throughout the ocean, sometimes traveling a million miles in their lifetimes.",
+      "They migrate to warmer equator waters during mating season.",
+      "Females and young males live together in groups, while mature males live solitary lives outside of the mating season.",
+      "Sperm whales' heads are filled with a waxy substance called 'spermaceti', from which the whale derives its name.",
+      "Spermaceti was a prime target of the whaling industry and was sought after for use in oil lamps, lubricants, and candles."
     ]
   },
   "blue-whale":{
@@ -24,15 +22,11 @@
     "population": "<15,000",
     "icon": "blue-whale-icon.svg",
     "satellite": "blue-whale-satellite.png",
-    "POIs":
+    "tts":
     [
-      {
-        "name": "Gulf of Mexico",
-        "description": "Functions as a year-round hub for breeding and feeding family groups",
-        "x": 0,
-        "y": 0,
-        "z": 0
-      }
+      "Blue whales are considered the largest animal known ever to have existed.",
+      "The blue whale's long and slender body can be of various shades of greyish-blue on its upper surface and somewhat lighter underneath.",
+      "Blue whale populations migrate between their summer feeding areas near the poles and their winter breeding grounds near the tropics."
     ]
   },
   "humpback-whale":{
@@ -43,15 +37,21 @@
     "audio": "humpback-call.mp3",
     "icon": "humpback-whale-icon.svg",
     "satellite": "humpback-whale-satellite.png",
-    "POIs":
+    "tts":
     [
-      {
-        "name": "Gulf of Mexico",
-        "description": "Functions as a year-round hub for breeding and feeding family groups",
-        "x": 0,
-        "y": 0,
-        "z": 0
-      }
+      "The humpback whale has a distinctive body shape, with long fins and tubercles on its head.",
+      "They are known for breaching, making them popular with whale watchers.",
+      "They feed in polar waters and migrate to tropical waters to breed and give birth.",
+      "Like other large whales, the humpback was a target for the whaling industry. Humans once hunted the species to the brink of extinction.",
+      "Luckily, their numbers have partially recovered and they are no longer considered endangered on the IUCN Red List."
+    ]
+  },
+  "ships":{
+    "tts":
+    [
+      "This overlay shows common routes of shipping vessels.",
+      "Shipping poses multiple threats, including deaths caused by vessel strikes in areas where there is high traffic.",
+      "This is one of many human threats impacting whales, including climate change, fishing, pollution, and natural resource exploitation."
     ]
   }
 }
