@@ -42,7 +42,6 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
     let arScene = $state(); //bound through svelte
     let appScene; //bound through svelte
 
-    let arController = $state();
     let camera = $state();
     let scene = $state();
     let markerRoot;
@@ -139,7 +138,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
                 smoothThreshold: 2
             }}).then((controller) => {
                 console.log("AR Initialised");
-                arController = controller;
+                window.arController = controller;
             var spermMarker = new THREEAR.PatternMarker({
                 patternUrl: '/data/patterns/sperm-whale.patt',
                 markerObject: markerDummy,
@@ -158,24 +157,24 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
             let sceneEl = document.querySelector("#a-frame-scene");
 
-            arController.trackMarker(spermMarker);
-            arController.trackMarker(blueMarker);
-            arController.trackMarker(humpbackMarker);
+            window.arController.trackMarker(spermMarker);
+            window.arController.trackMarker(blueMarker);
+            window.arController.trackMarker(humpbackMarker);
 
-            arController.addEventListener('markerFound', function(event) {
+            window.arController.addEventListener('markerFound', function(event) {
                 markerFound = true;
                 markerRoot.visible = true;
                 console.log(event.marker.patternUrl);
                 latestScanPatternUrl = event.marker.patternUrl.split('/')[3].slice(0,-5);
             });
-            arController.addEventListener('markerLost', function(event) {
+            window.arController.addEventListener('markerLost', function(event) {
                 markerFound = false;
             });
 
 
             requestAnimationFrame(function animate(nowMsec){
                 requestAnimationFrame( animate );
-                arController.update( source.domElement );
+                window.arController.update( source.domElement );
                 window.interactionManager.update();
                 renderer.render( scene, camera );
                 window.cssRenderer.render(scene, window.camera);
@@ -244,7 +243,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         const loadingScreen = document.getElementById( 'loading-screen' );
         loadingScreen.classList.add( 'fade-out' );
         loadingScreen.classList.add('mouse-passthrough')
-        arController.parameters.maxDetectionRate = 60;
+        window.arController.parameters.maxDetectionRate = 60;
         arScene.startAR();
     }
 
@@ -268,7 +267,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
     <a-entity light="type: ambient; color: #ffffff; intensity: 5"></a-entity>
     {#if !appLaunched}
         <a-entity id="ar-root">
-            <ARScene bind:this={arScene} arController={arController} camera={camera} scene={scene} markerDummy={markerDummy} onArFinish={initialiseAppFunc}/>
+            <ARScene bind:this={arScene} camera={camera} scene={scene} markerDummy={markerDummy} onArFinish={initialiseAppFunc}/>
         </a-entity>
     {/if}
 

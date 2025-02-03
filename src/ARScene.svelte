@@ -13,7 +13,7 @@
 
     let whaleAudioClip;
 
-    let {arController, camera, scene, markerDummy, onArFinish} = $props();
+    let {camera, scene, markerDummy, onArFinish} = $props();
 
     let whaleClicked = $state(false);
 
@@ -24,7 +24,7 @@
     AFRAME.registerComponent("ar-scene-component", {
         init: function () {
             console.log("arScene init");
-            console.log(arController);
+            console.log(window.arController);
             this.sceneChildren = [];
         },
         tick: function () {
@@ -107,7 +107,7 @@
     export const startAR = () => {
         setTimeout(() => {
             helpPopup = true;
-        }, 15000);
+        }, 10000);
     };
 
     function closePopup(){
@@ -117,7 +117,7 @@
 
     function launchApp(){
         whaleClicked = true;
-        arController.parameters.maxDetectionRate = 0;
+        window.arController.parameters.maxDetectionRate = 0;
         var launchTimeline = AFRAME.ANIME.timeline();
         launchTimeline.add({
             targets: 'video',

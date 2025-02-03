@@ -44,6 +44,7 @@
     let ttsEnabled = $state(false);
     let ttsInProgress = $state(false);
     let ttsText;
+    let ttsCaption;
 
     AFRAME.registerComponent("click-test", {
         init: function () {
@@ -83,7 +84,7 @@
         globe.object3D.children[3].children[1].renderOrder = 2;
         //overlayMaterial.copy(globe.object3D.children[0].children[0].material);
 
-        globeMaterial2.map = textureLoader.load("/assets/planet-overlays/shipping-density.png");
+        globeMaterial2.map = textureLoader.load("/assets/planet-overlays/shipping-overlay.png");
         globeMaterial2.color = new Color().setHex(0x0006bd);
         globeMaterial2.alphaTest = 0.0;
         globeMaterial2.blending = THREE.NormalBlending;
@@ -267,22 +268,26 @@
         else if (!ttsEnabled){
             window.speechSynthesis.cancel();
             ttsInProgress = false;
+            ttsCaption.style.display = "none";
         }
     }
     function runTTS(id){
         window.speechSynthesis.cancel();
-        ttsInProgress = true;
         var lines = window.whaleXML[id]["tts"];
         for (var i = 0; i < lines.length; i++) {
             var msg = new SpeechSynthesisUtterance();
+            //msg.voice = window.speechSynthesis.getVoices()[0];
             msg.text = lines[i];
             msg.onstart = (event) => {
+                ttsInProgress = true;
+                ttsCaption.style.display = "block";
                 ttsText.innerHTML = event.utterance.text;
             };
 
             if (i === lines.length - 1) {
                 msg.onend = (event) => {
                     ttsInProgress = false;
+                    ttsCaption.style.display = "none";
                 };
             }
 
@@ -456,9 +461,7 @@
         </div>
     {/if}
 
-    {#if ttsInProgress}
-        <div class="tts-caption">
-            <p bind:this={ttsText}></p>
-        </div>
-    {/if}
+    <div bind:this={ttsCaption} class="tts-caption" style="display: none">
+        <p bind:this={ttsText}></p>
+    </div>
 {/if}
