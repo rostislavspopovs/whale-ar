@@ -4,7 +4,7 @@
     "status": "Vulnerable to extinction",
     "length": "11-20m",
     "population": "350,000",
-    "icon": "sperm-whale-icon.svg",
+    "audio": "/audio/sperm-whale.mp3",
     "satellite": "sperm-whale-satellite.png",
     "tts":
     [
@@ -20,7 +20,7 @@
     "status": "High risk of extinction",
     "length": "24-26m",
     "population": "<15,000",
-    "icon": "blue-whale-icon.svg",
+    "audio": "/audio/humpback-whale.mp3",
     "satellite": "blue-whale-satellite.png",
     "tts":
     [
@@ -34,8 +34,7 @@
     "status": "Widespread",
     "length": "13-16m",
     "population": "84,000",
-    "audio": "humpback-call.mp3",
-    "icon": "humpback-whale-icon.svg",
+    "audio": "/audio/humpback-whale.mp3",
     "satellite": "humpback-whale-satellite.png",
     "tts":
     [

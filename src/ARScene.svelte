@@ -235,6 +235,15 @@
                     scale="0.2 0.2 0.2"
                     rotation="0 -90 0"
             ></a-entity>
+            <a-entity id="audio-waves"
+                      visible="true"
+                      loaded-gltf-model="modelId: audio-waves"
+                      animation-mixer
+                      position="0 1 0"
+                      scale="1 1 1"
+                      rotation="0 -90 0"
+            >
+            </a-entity>
         </a-entity>
     </a-entity>
 
@@ -245,7 +254,7 @@
         <div class="notice">
             {#if markerFound}
                 <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
-                <h2>Tap on the whale to continue</h2>
+                <h2>Tap on the whale to learn more!</h2>
             {:else}
                 <div class="scan-line"></div>
                 <h2>Point your camera at the stamp on your postcard</h2>
@@ -262,7 +271,7 @@
             <div style="display:flex">
                 <div>
                     <h2>Unable to detect a post card stamp.</h2>
-                    <h2>Tap on the globe to skip and go straight to the app!</h2>
+                    <h2>Tap on the globe to skip and go straight to the global map</h2>
                 </div>
                 <button class="globe-button" onclick={launchApp} aria-label="Launch App">
                     <svg width="100" height="100">

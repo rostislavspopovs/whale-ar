@@ -99,15 +99,6 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
         scene.add(camera);
 
-        window.cssRenderer = new CSS2DRenderer();
-        window.cssRenderer.setSize( window.innerWidth, window.innerHeight );
-        window.cssRenderer.domElement.className = "cssRenderer";
-        window.cssRenderer.domElement.style.position = 'absolute';
-        window.cssRenderer.domElement.style.top = '0px';
-        window.cssRenderer.domElement.style.zIndex = 10;
-        window.cssRenderer.domElement.style.pointerEvents = 'none';
-        document.body.appendChild(window.cssRenderer.domElement);
-
         window.interactionManager = new InteractionManager(renderer, camera, renderer.domElement);
         window.camera = camera;
         window.orbitControls = new OrbitControls( camera, renderer.domElement );
@@ -171,6 +162,11 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
                 markerFound = false;
             });
 
+            window.cssRenderer = new CSS3DRenderer();
+            window.cssRenderer.setSize(window.innerWidth, window.innerHeight);
+            window.cssRenderer.domElement.style.position = 'absolute';
+            window.cssRenderer.domElement.style.top = '0';
+            document.body.appendChild( window.cssRenderer.domElement );
 
             requestAnimationFrame(function animate(nowMsec){
                 requestAnimationFrame( animate );
@@ -236,7 +232,6 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
         });
 
-
     }
 
     function beginScan(){
@@ -261,6 +256,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         <a-asset-item id="sperm-whales" src="/assets/sperm-whales.glb"></a-asset-item>
         <a-asset-item id="blue-whales" src="/assets/blue-whales.glb"></a-asset-item>
         <a-asset-item id="humpback-whales" src="/assets/humpback-whales.glb"></a-asset-item>
+        <a-asset-item id="audio-waves" src="/assets/audio-waves.glb"></a-asset-item>
     </a-assets>
 
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
