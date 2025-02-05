@@ -19,12 +19,8 @@
 
     let helpPopup = $state(false);
 
-    console.log("ARScene Script");
-
     AFRAME.registerComponent("ar-scene-component", {
         init: function () {
-            console.log("arScene init");
-            console.log(window.arController);
             this.sceneChildren = [];
         },
         tick: function () {
@@ -74,12 +70,10 @@
     AFRAME.registerComponent("click-to-start", {
         init: function () {
             var obj = this.el.object3D;
-            console.log(obj);
             window.interactionManager.add(obj);
             obj.addEventListener('click', () => {
                 if(markerFound && !whaleClicked){
                     launchApp()
-                    // setTimeout(()=>{whaleAudioClip.play()}, 500);
                 }
             })
         }
@@ -93,10 +87,6 @@
             document.getElementById(whaleId).setAttribute("visible", false);
             if(whaleId == patternUrl){
                 document.getElementById(whaleId).setAttribute("visible", true);
-                // whaleAudioClip = new Howl({
-                //     src: ['/assets/'+window.whaleXML[whaleId]["audio"]]
-                // })
-                // setTimeout(()=>{whaleAudioClip.play()}, 500);
             }
         })
     };
@@ -107,7 +97,7 @@
     export const startAR = () => {
         setTimeout(() => {
             helpPopup = true;
-        }, 10000);
+        }, 20000);
     };
 
     function closePopup(){
@@ -167,7 +157,7 @@
             easing:"easeInQuad",
             duration: 2500,
         },1000);
-        setTimeout(onArFinish, 2500);
+        setTimeout(onArFinish, 2000);
     }
 
 
@@ -235,15 +225,6 @@
                     scale="0.2 0.2 0.2"
                     rotation="0 -90 0"
             ></a-entity>
-            <a-entity id="audio-waves"
-                      visible="true"
-                      loaded-gltf-model="modelId: audio-waves"
-                      animation-mixer
-                      position="0 1 0"
-                      scale="1 1 1"
-                      rotation="0 -90 0"
-            >
-            </a-entity>
         </a-entity>
     </a-entity>
 

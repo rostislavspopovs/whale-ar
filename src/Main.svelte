@@ -58,10 +58,12 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         init: function () {
             this.el.addEventListener("loaded", () => {
                 document.dispatchEvent(new Event("allAssetsLoaded"));
-                console.log(AFRAME.THREE.Cache.files);
                 console.log("Window Loaded");
                 setTimeout(() => {
                     arReady = true;
+                    const loadingScreen = document.getElementById( 'loading-screen' );
+                    loadingScreen.classList.add( 'fade-out' );
+                    loadingScreen.classList.add('mouse-passthrough')
                 }, 0)
             })
         }
@@ -87,7 +89,6 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         }
         loadWhaleData().then(_=> {
             window.whaleXML = window.whaleXML["whales"];
-            console.log(window.whaleXML);
         });
 
         scene = document.querySelector('a-scene').object3D;
@@ -155,7 +156,6 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
             window.arController.addEventListener('markerFound', function(event) {
                 markerFound = true;
                 markerRoot.visible = true;
-                console.log(event.marker.patternUrl);
                 latestScanPatternUrl = event.marker.patternUrl.split('/')[3].slice(0,-5);
             });
             window.arController.addEventListener('markerLost', function(event) {
@@ -226,7 +226,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
                 }
 
             initialiseAppFunc = function (){
-                setTimeout(function(){appLaunched=true}, 500);
+                setTimeout(function(){appLaunched=true}, 1500);
                 appScene.appInit(latestScanPatternUrl);
             }
 
@@ -235,9 +235,9 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
     }
 
     function beginScan(){
-        const loadingScreen = document.getElementById( 'loading-screen' );
-        loadingScreen.classList.add( 'fade-out' );
-        loadingScreen.classList.add('mouse-passthrough')
+        const landingScreen = document.getElementById( 'landing-screen' );
+        landingScreen.classList.add( 'fade-out' );
+        landingScreen.classList.add('mouse-passthrough')
         window.arController.parameters.maxDetectionRate = 60;
         arScene.startAR();
     }
@@ -256,7 +256,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         <a-asset-item id="sperm-whales" src="/assets/sperm-whales.glb"></a-asset-item>
         <a-asset-item id="blue-whales" src="/assets/blue-whales.glb"></a-asset-item>
         <a-asset-item id="humpback-whales" src="/assets/humpback-whales.glb"></a-asset-item>
-        <a-asset-item id="audio-waves" src="/assets/audio-waves.glb"></a-asset-item>
+        <a-asset-item id="audio-waves-model" src="/assets/audio-waves.glb"></a-asset-item>
     </a-assets>
 
     <a-entity light="type: hemisphere; color: #ffffff; groundColor: #5e5e5e; intensity: 4"></a-entity>
@@ -270,20 +270,21 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
     <App bind:this={appScene} scene={scene}/>
 </a-scene>
 
-<section id="loading-screen">
+<section class="loading-screen" id="loading-screen" style="z-index: 250">
+    <div id="loader"></div>
+</section>
+<section class="loading-screen" id="landing-screen">
     <h1 style="font-size: 60px; margin-top:5vh; text-align: center;">BLUE CORRIDORS</h1>
-    {#if !arReady}
-        <div id="loader"></div>
-    {:else}
-        <div>
-            <button id="start-button" onclick={beginScan} aria-label="Start Scan">
-                <svg width="150" height="150">
-                    <image xlink:href="/assets/scan-icon.svg" width="150" height="150"/>
-                </svg>
-            </button>
-            <h1>Start Scanning</h1>
-        </div>
-    {/if}
+
+    <div>
+        <button id="start-button" onclick={beginScan} aria-label="Start Scan">
+            <svg width="150" height="150">
+                <image xlink:href="/assets/scan-icon.svg" width="150" height="150"/>
+            </svg>
+        </button>
+        <h1>Start Scanning</h1>
+    </div>
+
     <div style="margin-bottom:5vh">
         <svg width="100" height="100">
             <image xlink:href="/assets/volume-up-icon.svg" width="100" height="100"/>
@@ -393,7 +394,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         <small>
             <p>Humpback Whale Model: "Whale" (https://skfb.ly/6GxJT) by Dirk.z; Sperm Whale Model: "Sperm Whale" (https://skfb.ly/oFq8D) by Bohdan Lvov; Blue Whale Model: "Blue whale" (https://skfb.ly/67nCt) by misaooo
                 are licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/)</p>
-            <p>Whale audio samples: Watkins Marine Mammal Sound Database, Woods Hole Oceanographic Institution and the New Bedford Whaling Museum.</p>
+            <p>Whale audio samples: Watkins Marine Mammal Sound Database, Woods Hole Oceanographic Institution and the New Bedford Whaling Museum; NOAA PMEL Acoustics Program</p>
         </small>
     </div>
 {/if}

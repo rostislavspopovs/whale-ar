@@ -46,31 +46,14 @@
     let ttsText;
     let ttsCaption;
 
-    AFRAME.registerComponent("click-test", {
-        init: function () {
-            var obj = this.el.object3D;
-            window.interactionManager.add(obj);
-            var testBox = document.querySelector("#test-box").object3D;
-            obj.addEventListener('click', (event) => {
+    let playingCall = $state(false);
 
-                    const raycaster = new THREE.Raycaster();
-                    raycaster.setFromCamera( event.coords, camera );
-                    console.log("tap:" + event.coords.x + " " + event.coords.y);
-                    const intersects = raycaster.intersectObjects( scene.children );
-                    for ( let i = 0; i < intersects.length; i ++ ) {
-                        console.log(intersects[ i ].point);
-                        poiLabel.position.copy(intersects[ i ].point);
-                        testBox.position.copy(intersects[ i ].point);
-                    }
+    let whaleCallClip;
 
-            })
-        }
-    });
+    let soundWavesObject;
 
-    console.log("App Scene");
     export const appInit = (latestScanPatternUrl) => {
         selectedWhaleId = latestScanPatternUrl;
-        console.log(selectedWhaleId);
         appLaunched = true;
         window.orbitControls.enabled = true;
         globe = document.querySelector("#globe");
@@ -115,10 +98,11 @@
             duration: 1500,
         });
         function setupGlobeControls() {
-            console.log(globe.object3D);
             window.orbitControls.target = globe.object3D.position;
             //window.orbitControls.autoRotate = true;
-            window.orbitControls.rotateSpeed = 0.5;
+            window.orbitControls.rotateSpeed = 1;
+            window.orbitControls.enableDamping = true;
+            window.orbitControls.dampingFactor = 0.1;
             window.orbitControls.enablePan = false
             window.orbitControls.minDistance = 2;
             window.orbitControls.maxDistance = 6;
@@ -129,7 +113,8 @@
         }
         SetGlobeOverlay();
         showSelectedWhale();
-        //setupPOIs();
+
+        soundWavesObject = document.querySelector("#audio-waves");
     };
 
     function resetCamera(){
@@ -140,9 +125,7 @@
 
     const whaleIds = ['sperm-whale','blue-whale','humpback-whale'];
     function launchWhaleSelectMenu(){
-        console.log(selectedWhaleId);
         currentIndex = whaleIds.indexOf(selectedWhaleId);
-        console.log("Whale Selector, current id: "+ currentIndex);
 
         resetCamera()
         globe.setAttribute("visible", false);
@@ -154,9 +137,9 @@
 
         AFRAME.ANIME({
             targets: [whaleSelector.object3D.scale],
-            x: 0.4,
-            y: 0.4,
-            z: 0.4,
+            x: 0.3,
+            y: 0.3,
+            z: 0.3,
             easing: 'easeOutQuint',
             duration: 750
         });
@@ -256,10 +239,6 @@
         globeMaterial3.needsUpdate = true;
     }
 
-    function closePopup(){
-        shippingPopup = false;
-    }
-
     function toggleTTS(){
         ttsEnabled = !ttsEnabled;
         if(ttsEnabled && !ttsInProgress) {
@@ -294,6 +273,23 @@
             window.speechSynthesis.speak(msg);
         }
     }
+
+    function playWhaleCall(){
+        if(playingCall === false) {
+            whaleCallClip = new Howl({
+                src: ['/assets/' + window.whaleXML[selectedWhaleId]["audio"]],
+                onend: function () {
+                    playingCall = false;
+                    soundWavesObject.setAttribute("visible", false);
+                }
+            });
+            playingCall = true;
+            soundWavesObject.setAttribute("visible", true);
+            whaleCallClip.play();
+        }
+    }
+
+
 </script>
 
 <a-entity
@@ -302,7 +298,7 @@
         position="0 0 -6"
         scale="0 0 0"
         rotation="0 0 0"
-        visible="false">
+        visible="true">
     <a-entity
             id="sperm-whale-globe"
             scale="1 1 1"
@@ -329,7 +325,7 @@
 <a-entity id="whale-selector"
           position="0 0 -6"
           scale="0 0 0"
-          visible="false">
+          visible="true">
     <a-entity id="sperm-whale"
               visible="false"
               loaded-gltf-model="modelId: sperm-whale-model"
@@ -354,10 +350,19 @@
             visible="false"
             loaded-gltf-model="modelId: humpback-whale-model"
             animation-mixer
-            position="0 -1 0"
+            position="-1 -1 0"
             scale="0.2 0.2 0.2"
             rotation="0 -90 0"
     ></a-entity>
+    <a-entity id="audio-waves"
+              visible="false"
+              loaded-gltf-model="modelId: audio-waves-model"
+              animation-mixer
+              position="-3 0 0"
+              scale="1.5 1.5 1.5"
+              rotation="0 0 0"
+    >
+    </a-entity>
 </a-entity>
 
 {#if appLaunched}
@@ -452,12 +457,28 @@
     </div>
     {#if inWhaleSelection}
         <div class="whale-panel">
-            <h1><b>Selected whale:</b> {window.whaleXML[selectedWhaleId]["name"]}</h1>
-            <h2>
-                {window.whaleXML[selectedWhaleId]["status"]}<br>
-                <b>Length:</b> {window.whaleXML[selectedWhaleId]["length"]}<br>
-                <b>Population:</b> {window.whaleXML[selectedWhaleId]["population"]}
-            </h2>
+            <div>
+                <h1><b>Selected whale:</b> {window.whaleXML[selectedWhaleId]["name"]}</h1>
+                <h2>
+                    {window.whaleXML[selectedWhaleId]["status"]}<br>
+                    <b>Length:</b> {window.whaleXML[selectedWhaleId]["length"]}<br>
+                    <b>Population:</b> {window.whaleXML[selectedWhaleId]["population"]}
+                    <div>
+                        <b>Whale Call:</b>
+                        <button onclick={playWhaleCall} aria-label="Play Whale Call">
+                            {#if playingCall}
+                                <svg width="25" height="25">
+                                    <image xlink:href="/assets/play-button-2.svg" width="25" height="25"/>
+                                </svg>
+                            {:else}
+                                <svg width="25" height="25">
+                                    <image xlink:href="/assets/play-button-1.svg" width="25" height="25"/>
+                                </svg>
+                            {/if}
+                        </button>
+                    </div>
+                </h2>
+            </div>
         </div>
     {/if}
 
