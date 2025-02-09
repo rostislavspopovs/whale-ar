@@ -282,14 +282,14 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
                 <image xlink:href="/assets/scan-icon.svg" width="150" height="150"/>
             </svg>
         </button>
-        <h1>Start Scanning</h1>
+        <h1>BEGIN SCAN</h1>
     </div>
 
     <div style="margin-bottom:5vh">
         <svg width="100" height="100">
             <image xlink:href="/assets/volume-up-icon.svg" width="100" height="100"/>
         </svg>
-        <h1>Turn up audio for best experience</h1>
+        <h1>TURN UP AUDIO FOR BEST EXPERIENCE</h1>
     </div>
 </section>
 <button class="info-button" onclick={toggleInfoPanel} aria-label="Information">
@@ -316,7 +316,7 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
                     </svg>
                 </td>
                 <td>
-                    <p>Tap "Start Scanning" to launch the whale detector and point your phone camera to the postage stamp on your postcard.</p>
+                    <p>Tap "BEGIN SCAN" to launch the whale detector and point your phone camera to the postage stamp on your postcard.</p>
                 </td>
             </tr>
             <tr>
@@ -385,12 +385,13 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
         </div>
 
         <h2 style="font-family: WWF;">CREDITS</h2>
-        <p> "Blue Corridors" Application <p>
-        <p> Developed by <a href="https://www.linkedin.com/in/rosspopovs/">Ross Popovs</a> in collaboration with
+        <h3> "Blue Corridors" Application </h3>
+        <h3> Developed by <a href="https://www.linkedin.com/in/rosspopovs/">Ross Popovs</a>
+            <br>in collaboration with
             <a target="_blank" href="https://www.linkedin.com/in/julianstadon/">Dr Julian Stadon</a> and the
             <a target="_blank" href="https://www.southampton.ac.uk/research/institutes-centres/marine-maritime-institute">Southampton Marine and Maritime Institute</a>
-        </p>
-        <p> All map data is sourced from the <a target="_blank" href="https://wwfwhales.org/resources/protecting-blue-corridors-report">Protecting Blue Corridors Report</a>. </p>
+        </h3>
+        <h3> All map data is sourced from the <a target="_blank" href="https://wwfwhales.org/resources/protecting-blue-corridors-report">Protecting Blue Corridors Report</a></h3>
         <small>
             <p>Humpback Whale Model: "Whale" (https://skfb.ly/6GxJT) by Dirk.z; Sperm Whale Model: "Sperm Whale" (https://skfb.ly/oFq8D) by Bohdan Lvov; Blue Whale Model: "Blue whale" (https://skfb.ly/67nCt) by misaooo
                 are licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/)</p>

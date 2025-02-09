@@ -219,9 +219,11 @@
     function toggleShipOverlay(){
         globeMaterial2.visible = !globeMaterial2.visible;
         shipVisible = !shipVisible;
-        if(!shippingPopupShown){
-            shippingPopupShown = true;
-            runTTS("ships");
+        if(shipVisible && !shippingPopupShown){
+            if(ttsEnabled) {
+                shippingPopupShown = true;
+                runTTS("ships");
+            }
         }
     }
     function toggleGPSOverlay(){
@@ -367,17 +369,19 @@
 
 {#if appLaunched}
     <div class="map-options">
-        <button class="tts-button" onclick={toggleTTS} aria-label="Text to speech information about whale">
-            {#if !ttsEnabled}
-                <svg width="40" height="40">
-                    <image xlink:href="/assets/tts-icon-1.svg" width="40" height="40"/>
-                </svg>
-            {:else}
-                <svg width="40" height="40">
-                    <image xlink:href="/assets/tts-icon-2.svg" width="40" height="40"/>
-                </svg>
-            {/if}
-        </button>
+        <div id="tts-div">
+            <button class="tts-button" onclick={toggleTTS} aria-label="Text to speech information about whale">
+                {#if !ttsEnabled}
+                    <svg width="40" height="40">
+                        <image xlink:href="/assets/tts-icon-1.svg" width="40" height="40"/>
+                    </svg>
+                {:else}
+                    <svg width="40" height="40">
+                        <image xlink:href="/assets/tts-icon-2.svg" width="40" height="40"/>
+                    </svg>
+                {/if}
+            </button>
+        </div>
         {#if !inWhaleSelection}
         <button class="gps-toggle-button" onclick={toggleGPSOverlay} aria-label="Toggle GPS Tracking Overlay">
             {#if gpsVisible}

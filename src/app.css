@@ -10,6 +10,8 @@ video{
 
 
 :root {
+
+  -webkit-text-size-adjust: none;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -31,8 +33,11 @@ video{
 }
 
 .notice{
-  z-index: 150;
+  z-index: 200 !important;
+  pointer-events: none;
+  position: fixed;
   display: flex;
+  width: 100%;
   justify-content: end;
   flex-direction: column;
   align-items: center;
@@ -43,21 +48,29 @@ video{
 button{
   background: transparent;
   border: none !important;
-  font-size:0;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  padding-left: 5px;
+  padding-right: 5px;
 }
+
 
 .whale-menu{
   z-index: 100;
-  position: absolute;
-  top: 75vh; right: 50%;
-  transform: translate(50%,-50%);
+  position: fixed;
+  right: 50%;
+  bottom: 12%;
+  transform: translate(50%,0);
 }
 
 .whale-panel{
   position: fixed;
   z-index: 100;
   width: 90%;
-  height: 30%;
+  height: fit-content;
   top: 5%; right: 50%;
   overflow-y: scroll;
   transform: translate(50%,0);
@@ -100,12 +113,12 @@ button{
 .map-options{
   display: flex;
   flex-direction: row;
+  align-items: flex-end;
   position: fixed;
   bottom: 5px;
   left: 0px;
   z-index: 100;
 }
-
 
 .map-key{
   display: flex;
@@ -121,6 +134,11 @@ button{
   width: fit-content;
 }
 
+#tts-div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 
 #top-text{
@@ -163,18 +181,7 @@ button{
   height: 2px;
   background-color: rgba(255, 255, 255, 0.53);
   animation : scan-line-animation 3s linear infinite alternate;
-}
-
-
-.poi{
-  z-index: 100;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border-style: solid;
-  border-width: 2px;
-  border-color: white;
-  background-color: rgba(0, 0, 0, 0);
+  pointer-events: none;
 }
 
 @-webkit-keyframes scan-line-animation {
@@ -235,32 +242,7 @@ button{
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
-#loader:before {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  right: 5px;
-  bottom: 5px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  border-top-color: #ffffff;
-  -webkit-animation: spin 3s linear infinite;
-  animation: spin 3s linear infinite;
-}
-#loader:after {
-  content: "";
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  right: 15px;
-  bottom: 15px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  border-top-color: #ffffff;
-  -webkit-animation: spin 1.5s linear infinite;
-  animation: spin 1.5s linear infinite;
-}
+
 @-webkit-keyframes spin {
   0%   {
     -webkit-transform: rotate(0deg);
@@ -286,9 +268,13 @@ button{
   }
 }
 
+#a-frame-scene > div.a-modal > div > div.a-dialog-text-container > div, #a-frame-scene > div.a-modal > div{
+  background-color: #030827;
+}
+
 #a-frame-scene > div.a-modal > div > div.a-dialog-text-container > div, #a-frame-scene > div.a-modal > div > div.a-dialog-buttons-container > button.a-dialog-button {
 
-  color: black !important;
+  color: #ffffff !important;
   text-shadow:0 !important;
   font-family: Monospace !important;
 

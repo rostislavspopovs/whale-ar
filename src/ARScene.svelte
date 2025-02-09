@@ -95,15 +95,9 @@
     };
 
     export const startAR = () => {
-        setTimeout(() => {
-            helpPopup = true;
-        }, 20000);
+
     };
 
-    function closePopup(){
-        helpPopup = false;
-        startAR();
-    }
 
     function launchApp(){
         whaleClicked = true;
@@ -157,6 +151,7 @@
             easing:"easeInQuad",
             duration: 2500,
         },1000);
+        setTimeout(onArFinish, 2000);
         setTimeout(onArFinish, 2000);
     }
 
@@ -234,34 +229,20 @@
     {#if !helpPopup}
         <div class="notice">
             {#if markerFound}
-                <h1>You've discovered the <br>{window.whaleXML[patternUrl]["name"]}!</h1>
-                <h2>Tap on the whale to learn more!</h2>
+                <h1>YOU'VE DISCOVERED THE <br>{window.whaleXML[patternUrl]["name"]}!</h1>
+                <h2>TAP ON THE WHALE TO LEARN MORE</h2>
             {:else}
                 <div class="scan-line"></div>
-                <h2>Point your camera at the stamp on your postcard</h2>
+                <h2>POINT YOUR CAMERA TO THE<br> STAMP ON YOUR POST CARD<br>
+                <button onclick={launchApp} aria-label="Press to skip" style="pointer-events: all !important;">
+                        or click here to go straight to the app
+                </button>
+                </h2>
             {/if}
         </div>
     {/if}
-    {#if helpPopup && !markerFound}
-        <div class="popup">
-            <button aria-label="Close panel" onclick={closePopup} style="position: absolute; top: 0px; right: 0px">
-                <svg width="30" height="30">
-                    <image xlink:href="/assets/close-icon.svg" width="30" height="30"/>
-                </svg>
-            </button>
-            <div style="display:flex">
-                <div>
-                    <h2>Unable to detect a post card stamp.</h2>
-                    <h2>Tap on the globe to skip and go straight to the global map</h2>
-                </div>
-                <button class="globe-button" onclick={launchApp} aria-label="Launch App">
-                    <svg width="100" height="100">
-                        <image xlink:href="/assets/globe-button.svg" width="100" height="100"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    {/if}
+{:else}
+    <div id="loader"></div>
 {/if}
 
 
