@@ -244,6 +244,9 @@ import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
     function toggleInfoPanel(){
         infoPanelOpened = !infoPanelOpened;
+        if(infoPanelOpened) {
+            gtag('event', 'BC_INFO_PANEL_OPEN', {});
+        }
     }
 </script>
 <a-scene xr-mode-ui="enabled: false" id="a-frame-scene" light="defaultLightsEnabled: false" log>

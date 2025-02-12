@@ -152,7 +152,11 @@
             duration: 2500,
         },1000);
         setTimeout(onArFinish, 2000);
-        setTimeout(onArFinish, 2000);
+
+        gtag('event', 'BC_APP_LAUNCHED', {
+            'whale_id': patternUrl,
+        });
+
     }
 
 
